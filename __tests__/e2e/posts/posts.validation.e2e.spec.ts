@@ -34,7 +34,7 @@ describe('Posts API body validation check', () => {
       .send({})
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyBodyDataSet.body.errorMessages).toHaveLength(4);
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);
 
     const emptyStringDataSet = await request(app)
       .post(POSTS_PATH)
@@ -47,7 +47,7 @@ describe('Posts API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyStringDataSet.body.errorMessages).toHaveLength(4);
+    expect(emptyStringDataSet.body.errorsMessages).toHaveLength(4);
 
     const invalidLengthDataSet = await request(app)
       .post(POSTS_PATH)
@@ -60,7 +60,7 @@ describe('Posts API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidLengthDataSet.body.errorMessages).toHaveLength(3);
+    expect(invalidLengthDataSet.body.errorsMessages).toHaveLength(3);
 
     const randomBlogIdDataSet = await request(app)
       .post(POSTS_PATH)
@@ -86,7 +86,7 @@ describe('Posts API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(blogIdNotNumericDataSet.body.errorMessages).toHaveLength(1);
+    expect(blogIdNotNumericDataSet.body.errorsMessages).toHaveLength(1);
   });
 
   it(`❌ should not update post when incorrect body passed; PUT /posts/:id'`, async () => {
@@ -114,7 +114,7 @@ describe('Posts API body validation check', () => {
       .send({})
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyBodyDataSet.body.errorMessages).toHaveLength(4);
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);
 
     const emptyStringDataSet = await request(app)
       .put(`${POSTS_PATH}/${post.id}`)
@@ -127,7 +127,7 @@ describe('Posts API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyStringDataSet.body.errorMessages).toHaveLength(4);
+    expect(emptyStringDataSet.body.errorsMessages).toHaveLength(4);
 
     const invalidLengthDataSet = await request(app)
       .put(`${POSTS_PATH}/${post.id}`)
@@ -140,7 +140,7 @@ describe('Posts API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidLengthDataSet.body.errorMessages).toHaveLength(3);
+    expect(invalidLengthDataSet.body.errorsMessages).toHaveLength(3);
 
     const randomBlogIdDataSet = await request(app)
       .put(`${POSTS_PATH}/${post.id}`)
@@ -166,7 +166,7 @@ describe('Posts API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(blogIdNotNumericDataSet.body.errorMessages).toHaveLength(1);
+    expect(blogIdNotNumericDataSet.body.errorsMessages).toHaveLength(1);
   });
 
   it(`❌ should not deleted post when incorrect param; DELETE /posts/:id'`, async () => {

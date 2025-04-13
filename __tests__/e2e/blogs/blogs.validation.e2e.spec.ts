@@ -31,7 +31,7 @@ describe('Blogs API body validation check', () => {
       .send({})
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyBodyDataSet.body.errorMessages).toHaveLength(3);
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(3);
 
     const emptyStringDataSet = await request(app)
       .post(BLOGS_PATH)
@@ -43,7 +43,7 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyStringDataSet.body.errorMessages).toHaveLength(3);
+    expect(emptyStringDataSet.body.errorsMessages).toHaveLength(3);
 
     const invalidLengthDataSet = await request(app)
       .post(BLOGS_PATH)
@@ -55,7 +55,7 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidLengthDataSet.body.errorMessages).toHaveLength(3);
+    expect(invalidLengthDataSet.body.errorsMessages).toHaveLength(3);
 
     const invalidWebsiteUrlDataSet = await request(app)
       .post(BLOGS_PATH)
@@ -67,7 +67,7 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidWebsiteUrlDataSet.body.errorMessages).toHaveLength(1);
+    expect(invalidWebsiteUrlDataSet.body.errorsMessages).toHaveLength(1);
 
     const websiteUrlRegex =
       /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
@@ -101,7 +101,7 @@ describe('Blogs API body validation check', () => {
       .send({})
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyBodyDataSet.body.errorMessages).toHaveLength(3);
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(3);
 
     const emptyStringDataSet = await request(app)
       .put(`${BLOGS_PATH}/${blog.id}`)
@@ -113,7 +113,7 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(emptyStringDataSet.body.errorMessages).toHaveLength(3);
+    expect(emptyStringDataSet.body.errorsMessages).toHaveLength(3);
 
     const invalidLengthDataSet = await request(app)
       .put(`${BLOGS_PATH}/${blog.id}`)
@@ -125,7 +125,7 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidLengthDataSet.body.errorMessages).toHaveLength(3);
+    expect(invalidLengthDataSet.body.errorsMessages).toHaveLength(3);
 
     const invalidWebsiteUrlDataSet = await request(app)
       .put(`${BLOGS_PATH}/${blog.id}`)
@@ -137,7 +137,7 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidWebsiteUrlDataSet.body.errorMessages).toHaveLength(1);
+    expect(invalidWebsiteUrlDataSet.body.errorsMessages).toHaveLength(1);
 
     const websiteUrlRegex =
       /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;

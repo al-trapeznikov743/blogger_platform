@@ -4,7 +4,7 @@ import {ErrorType, ValidationErrorType} from '../../types/errors';
 import {HttpStatus} from '../../types/httpStatuses';
 
 export const createErrorMessages = (errors: ErrorType[]): ValidationErrorType => {
-  return {errorMessages: errors};
+  return {errorsMessages: errors};
 };
 
 const formatErrors = (error: ValidationError): ErrorType => {
@@ -26,7 +26,7 @@ export const validationResultMiddleware = (
     .array({onlyFirstError: true});
 
   if (errors.length) {
-    res.status(HttpStatus.BAD_REQUEST_400).json({errorMessages: errors});
+    res.status(HttpStatus.BAD_REQUEST_400).json({errorsMessages: errors});
 
     return;
   }
