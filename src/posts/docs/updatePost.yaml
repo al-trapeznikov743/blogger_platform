@@ -1,0 +1,31 @@
+summary: Update post by id
+tags: [Posts]
+security:
+  - basicAuth: []
+
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: 'The unique identifier of the post'
+    schema:
+      $ref: './components.yaml#/components/schemas/Id'
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/PostInputModel'
+responses:
+  204:
+    description: Post updated successfully
+  400:
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'
+  401:
+    description: Unauthorized
+  404:
+    description: Post not found

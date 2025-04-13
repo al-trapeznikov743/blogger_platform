@@ -1,0 +1,25 @@
+summary: Add a new blog
+tags: [Blogs]
+security:
+  - basicAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/BlogInputModel'
+responses:
+  201:
+    description: The blog was successfully created
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/BlogViewModel'
+  400:
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'
+  401:
+    description: Unauthorized

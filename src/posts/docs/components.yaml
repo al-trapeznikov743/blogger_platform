@@ -1,0 +1,88 @@
+components:
+  schemas:
+    Id:
+      type: string
+      description: Identifier
+
+    Title:
+      type: string
+      description: Title post
+      maxLength: 30
+
+    ShortDescription:
+      type: string
+      description: Description post
+      maxLength: 100
+
+    Content:
+      type: string
+      description: Content post
+      maxLength: 1000
+    
+    BlogId:
+      $ref: '#/components/schemas/Id'
+      description: Blog identifier
+
+    BlogName:
+      type: string
+      description: Blog name
+
+    PostInputModel:
+      type: object
+      description: Fields for create and update post
+      required:
+        - title
+        - shortDescription
+        - content
+        - blogId
+      properties:
+        title:
+          $ref: '#/components/schemas/Title'
+        shortDescription:
+          $ref: '#/components/schemas/ShortDescription'
+        content:
+          $ref: '#/components/schemas/Content'
+        blogId:
+          $ref: '#/components/schemas/BlogId'
+
+    PostViewModel:
+      type: object
+      description: Returned blog fields
+      required:
+        - id
+        - title
+        - shortDescription
+        - content
+        - blogId
+        - blogName
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        title:
+          $ref: '#/components/schemas/Title'
+        shortDescription:
+          $ref: '#/components/schemas/ShortDescription'
+        content:
+          $ref: '#/components/schemas/Content'
+        blogId:
+          $ref: '#/components/schemas/BlogId'
+        blogName:
+          $ref: '#/components/schemas/BlogName'
+    
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: "name"
+        message:
+          type: string
+          example: "Invalid name"
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errorsMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

@@ -1,0 +1,73 @@
+components:
+  schemas:
+    Id:
+      type: string
+      description: Identifier
+
+    Name:
+      type: string
+      description: Name
+      maxLength: 15
+
+    Description:
+      type: string
+      description: Description
+      maxLength: 500
+
+    Url:
+      type: string
+      description: Url address
+      pattern: '^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$'
+      maxLength: 100
+      example: https://www.google.com/
+
+    BlogInputModel:
+      type: object
+      description: Fields for create and update blog
+      required:
+        - name
+        - description
+        - websiteUrl
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        description:
+          $ref: '#/components/schemas/Description'
+        websiteUrl:
+          $ref: '#/components/schemas/Url'
+
+    BlogViewModel:
+      type: object
+      description: Returned blog fields
+      required:
+        - id
+        - name
+        - description
+        - websiteUrl
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          $ref: '#/components/schemas/Name'
+        description:
+          $ref: '#/components/schemas/Description'
+        websiteUrl:
+          $ref: '#/components/schemas/Url'
+
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'name'
+        message:
+          type: string
+          example: 'Invalid name'
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errorsMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

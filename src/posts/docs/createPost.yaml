@@ -1,0 +1,25 @@
+summary: Add a new post
+tags: [Posts]
+security:
+  - basicAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/PostInputModel'
+responses:
+  201:
+    description: The post was successfully created
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/PostViewModel'
+  400:
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'
+  401:
+    description: Unauthorized

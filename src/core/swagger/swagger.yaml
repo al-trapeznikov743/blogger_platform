@@ -1,0 +1,67 @@
+openapi: 3.0.0
+info:
+  title: BlogerPlatform API
+  version: 1.0.0
+  description: BlogerPlatform API
+tags:
+  - name: Blogs
+    description: API for managing blogs
+  - name: Posts
+    description: API for managing posts
+  - name: Testing
+    description: API for clearing the database
+
+paths:
+  /blogs:
+    get:
+      $ref: '../../blogs/docs/getBlogs.yaml'
+    post:
+      $ref: '../../blogs/docs/createBlog.yaml'
+  /blogs/{id}:
+    get:
+      $ref: '../../blogs/docs/getBlogById.yaml'
+    put:
+      $ref: '../../blogs/docs/updateBlog.yaml'
+    delete:
+      $ref: '../../blogs/docs/deleteBlog.yaml'
+
+  /posts:
+    get:
+      $ref: '../../posts/docs/getPosts.yaml'
+    post:
+      $ref: '../../posts/docs/createPost.yaml'
+  /posts/{id}:
+    get:
+      $ref: '../../posts/docs/getPostById.yaml'
+    put:
+      $ref: '../../posts/docs/updatePost.yaml'
+    delete:
+      $ref: '../../posts/docs/deletePost.yaml'
+
+  /testing/all-data:
+    delete:
+      $ref: '../../testing/docs/testing.yaml'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'name'
+        message:
+          type: string
+          example: 'Invalid name'
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errorsMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

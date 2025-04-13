@@ -1,0 +1,18 @@
+summary: Get blog by id
+tags: [Blogs]
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: "The unique identifier of the blog"
+    schema:
+      $ref: './components.yaml#/components/schemas/Id'
+responses:
+  200:
+    description: The requested blog
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/BlogViewModel'
+  404:
+    description: Blog not found

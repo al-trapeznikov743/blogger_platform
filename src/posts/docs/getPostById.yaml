@@ -1,0 +1,18 @@
+summary: Get post by id
+tags: [Posts]
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: "The unique identifier of the post"
+    schema:
+      $ref: './components.yaml#/components/schemas/Id'
+responses:
+  200:
+    description: The requested post
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/PostViewModel'
+  404:
+    description: Post not found

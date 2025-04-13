@@ -1,0 +1,11 @@
+summary: Get blogs
+tags: [Blogs]
+responses:
+  200:
+    description: List of all blogs
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: './components.yaml#/components/schemas/BlogViewModel'

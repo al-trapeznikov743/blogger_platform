@@ -1,0 +1,5 @@
+summary: 'Clear database: delete all data from all tables/collections'
+tags: [Testing]
+responses:
+  204:
+    description: All data deleted
