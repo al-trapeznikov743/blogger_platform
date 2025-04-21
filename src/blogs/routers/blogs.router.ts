@@ -14,7 +14,7 @@ export const blogsRouter = Router();
 blogsRouter
   .get('', getBlogsHandler)
 
-  .get('/:id', idValidation, validationResultMiddleware, getBlogByIdHandler)
+  .get('/:id', idValidation(), validationResultMiddleware, getBlogByIdHandler)
 
   .post(
     '',
@@ -27,7 +27,7 @@ blogsRouter
   .put(
     '/:id',
     superAdminGuardMiddleware,
-    idValidation,
+    idValidation(),
     blogInputDtoValitation,
     validationResultMiddleware,
     updateBlogHandler
@@ -36,7 +36,7 @@ blogsRouter
   .delete(
     '/:id',
     superAdminGuardMiddleware,
-    idValidation,
+    idValidation(),
     validationResultMiddleware,
     deleteBlogHandler
   );

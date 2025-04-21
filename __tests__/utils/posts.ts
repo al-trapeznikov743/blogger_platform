@@ -3,7 +3,7 @@ import request from 'supertest';
 import {POSTS_PATH} from '../../src/core/paths/paths';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
 import {generateBasicAuthToken} from '.';
-import {Post} from '../../src/posts/types/posts';
+import {Post} from '../../src/posts/types/post';
 import {PostInputDto} from '../../src/posts/dto/post-dto';
 
 export const getPostDto = (blogId: string): PostInputDto => {
@@ -40,13 +40,11 @@ export const updatePost = async (
   postId: string,
   blogId: string
 ): Promise<void> => {
-  const testDriverData: PostInputDto = getPostDto(blogId);
+  const testPostData: PostInputDto = getPostDto(blogId);
 
-  const updatedPostResponse = await request(app)
+  await request(app)
     .put(`${POSTS_PATH}/${postId}`)
     .set('Authorization', generateBasicAuthToken())
-    .send(testDriverData)
+    .send(testPostData)
     .expect(HttpStatus.NO_CONTENT_204);
-
-  return updatedPostResponse.body;
 };

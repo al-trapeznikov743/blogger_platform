@@ -3,31 +3,27 @@ import {HttpStatus} from '../../../core/types/httpStatuses';
 import {createErrorMessages} from '../../../core/utils/error.utils';
 import {blogsRepository} from '../../repositories/blogs.repository';
 
-export const updateBlogHandler = ({params, body}: Request, res: Response) => {
-  const blog = blogsRepository.findById(params.id);
+export const updateBlogHandler = async ({params, body}: Request, res: Response) => {
+  try {
+    const blog = await blogsRepository.findById(params.id);
 
-  if (!blog) {
-    res.status(HttpStatus.NOT_FOUND_404).send(
-      createErrorMessages([
-        {
-          field: 'id',
-          message: 'Blog not found'
-        }
-      ])
-    );
+    if (!blog) {
+      res.status(HttpStatus.NOT_FOUND_404).send(
+        createErrorMessages([
+          {
+            field: 'id',
+            message: 'Blog not found'
+          }
+        ])
+      );
 
-    return;
+      return;
+    }
+
+    await blogsRepository.update(params.id, body);
+
+    res.sendStatus(HttpStatus.NO_CONTENT_204);
+  } catch (_: unknown) {
+    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
   }
-
-  /* const errors = updateVideoInputDtoValidation(body);
-
-  if (errors.length) {
-    res.status(HttpStatus.BAD_REQUEST_400).send(createErrorMessages(errors));
-
-    return;
-  } */
-
-  blogsRepository.update(params.id, body);
-
-  res.sendStatus(HttpStatus.NO_CONTENT_204);
 };

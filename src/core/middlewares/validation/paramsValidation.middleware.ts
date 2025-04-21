@@ -1,11 +1,22 @@
-import {param} from 'express-validator';
+import {check, param} from 'express-validator';
 
-export const idValidation = param('id')
+/* export const idValidation = param('id')
   .exists()
   .withMessage('ID is required')
   .isString()
   .withMessage('ID must be a string')
   .isLength({min: 1})
   .withMessage('ID must not be empty')
-  .isNumeric()
-  .withMessage('ID must be a numeric string');
+  .isMongoId()
+  .withMessage('ID must be a valid MongoDB ObjectId'); */
+
+export const idValidation = (field: string = 'id') =>
+  check(field)
+    .exists()
+    .withMessage('ID is required')
+    .isString()
+    .withMessage('ID must be a string')
+    .isLength({min: 1})
+    .withMessage('ID must not be empty')
+    .isMongoId()
+    .withMessage('ID must be a valid MongoDB ObjectId');

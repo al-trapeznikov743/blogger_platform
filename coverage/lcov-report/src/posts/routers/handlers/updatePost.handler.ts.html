@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">94.73% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>18/19</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">94.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/15</span>
+                <span class='fraction'>16/17</span>
             </div>
         
             
@@ -112,16 +112,14 @@
 <a name='L47'></a><a href='#L47'>47</a>
 <a name='L48'></a><a href='#L48'>48</a>
 <a name='L49'></a><a href='#L49'>49</a>
-<a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a>
-<a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L50'></a><a href='#L50'>50</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -135,13 +133,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -166,6 +157,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
@@ -173,51 +167,48 @@ import {createErrorMessages} from '../../../core/utils/error.utils';
 import {postsRepository} from '../../repositories/posts.repository';
 import {blogsRepository} from '../../../blogs/repositories/blogs.repository';
 &nbsp;
-export const updatePostHandler = ({params, body}: Request, res: Response) =&gt; {
-  const post = postsRepository.findById(params.id);
+export const updatePostHandler = async ({params, body}: Request, res: Response) =&gt; {
+  try {
+    const post = await postsRepository.findById(params.id);
 &nbsp;
-  if (!post) {
-    res.status(HttpStatus.NOT_FOUND_404).send(
-      createErrorMessages([
-        {
-          field: 'id',
-          message: 'Post not found'
-        }
-      ])
-    );
+    if (!post) {
+      res.status(HttpStatus.NOT_FOUND_404).send(
+        createErrorMessages([
+          {
+            field: 'id',
+            message: 'Post not found'
+          }
+        ])
+      );
 &nbsp;
-    return;
+      return;
+    }
+&nbsp;
+    const blog = await blogsRepository.findById(body.blogId);
+&nbsp;
+    if (!blog) {
+      res.status(HttpStatus.NOT_FOUND_404).send(
+        createErrorMessages([
+          {
+            field: 'blogId',
+            message: `Blog with ID=${body.blogId} does not exist`
+          }
+        ])
+      );
+&nbsp;
+      return;
+    }
+&nbsp;
+    postsRepository.update(params.id, {
+      ...body,
+      blogId: blog._id.toString(),
+      blogName: blog.name
+    });
+&nbsp;
+    res.sendStatus(HttpStatus.NO_CONTENT_204);
+  } catch (_: unknown) {
+<span class="cstat-no" title="statement not covered" >    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);</span>
   }
-  /* const errors = updateVideoInputDtoValidation(body);
-&nbsp;
-  if (errors.length) {
-    res.status(HttpStatus.BAD_REQUEST_400).send(createErrorMessages(errors));
-&nbsp;
-    return;
-  } */
-&nbsp;
-  const blog = blogsRepository.findById(body.blogId);
-&nbsp;
-  if (!blog) {
-    res.status(HttpStatus.NOT_FOUND_404).send(
-      createErrorMessages([
-        {
-          field: 'blogId',
-          message: `Blog with ID=${body.blogId} does not exist`
-        }
-      ])
-    );
-&nbsp;
-    return;
-  }
-&nbsp;
-  postsRepository.update(params.id, {
-    ...body,
-    blogId: blog.id,
-    blogName: blog.name
-  });
-&nbsp;
-  res.sendStatus(HttpStatus.NO_CONTENT_204);
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -226,7 +217,7 @@ export const updatePostHandler = ({params, body}: Request, res: Response) =&gt; 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-04-13T09:02:36.008Z
+                at 2025-04-21T07:18:33.210Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

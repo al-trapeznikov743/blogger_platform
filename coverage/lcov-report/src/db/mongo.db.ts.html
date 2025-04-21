@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/core/middlewares/validation/bodyValidation.middleware.ts</title>
+    <title>Code coverage report for src/db/mongo.db.ts</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../../../prettify.css" />
-    <link rel="stylesheet" href="../../../../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../../../../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../../index.html">All files</a> / <a href="index.html">src/core/middlewares/validation</a> bodyValidation.middleware.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/db</a> mongo.db.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.9% </span>
+                <span class="strong">72% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/22</span>
+                <span class='fraction'>18/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">78.57% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>11/14</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">40% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.47% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/19</span>
+                <span class='fraction'>15/21</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -106,26 +106,12 @@
 <a name='L41'></a><a href='#L41'>41</a>
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a>
-<a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a>
-<a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a>
-<a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L44'></a><a href='#L44'>44</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -134,91 +120,78 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {body} from 'express-validator';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Collection, Db, MongoClient} from 'mongodb';
+import {config} from '../core/settings/config';
+import {Blog} from '../blogs/types/blog';
+import {Post} from '../posts/types/post';
 &nbsp;
-type stringValidationOptions = {
-  key: string;
-  min?: number;
-  max?: number;
-  nullable?: boolean;
-  isNumeric?: boolean;
-  pattern?: RegExp;
+const BLOG_COLLECTION_NAME = 'blogs';
+const POST_COLLECTION_NAME = 'posts';
+&nbsp;
+export let client: MongoClient;
+export let blogCollection: Collection&lt;Blog&gt;;
+export let postCollection: Collection&lt;Post&gt;;
+&nbsp;
+type InitFn = () =&gt; void;
+&nbsp;
+export const initRepositories = <span class="fstat-no" title="function not covered" >(i</span>nitFns: InitFn[]): void =&gt;
+<span class="cstat-no" title="statement not covered" >  initFns.forEach(<span class="fstat-no" title="function not covered" >(f</span>n) =&gt; <span class="cstat-no" title="statement not covered" >fn())</span>;</span>
+&nbsp;
+export const runDB = async (url: string): Promise&lt;void&gt; =&gt; {
+  client = new MongoClient(url);
+  const db: Db = client.db(config.DB_NAME);
+&nbsp;
+  blogCollection = db.collection&lt;Blog&gt;(BLOG_COLLECTION_NAME);
+  postCollection = db.collection&lt;Post&gt;(POST_COLLECTION_NAME);
+&nbsp;
+  try {
+    await client.connect();
+    await db.command({ping: 1});
+&nbsp;
+    console.log('✅ Connected to the database');
+  } catch (e) {
+<span class="cstat-no" title="statement not covered" >    await client.close();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    throw new Error(`❌ Database not connected: ${e}`);</span>
+  }
 };
 &nbsp;
-export const stringValidation = ({
-  key,
-  min,
-  max,
-  nullable,
-  isNumeric,
-  pattern
-}: stringValidationOptions) =&gt; {
-  let validator = body(key);
-&nbsp;
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (nullable) {
-<span class="cstat-no" title="statement not covered" >    validator = validator.optional({nullable: true});</span>
+export async function <span class="fstat-no" title="function not covered" >stopDb(</span>) {
+<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (!client) {</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`❌ No active client`);</span>
   }
 &nbsp;
-  validator = validator.isString().withMessage(`${key} should be a string`).trim();
-&nbsp;
-  const lengthOptions: {min?: number; max?: number} = {};
-&nbsp;
-  if (min) lengthOptions.min = min;
-  if (max) lengthOptions.max = max;
-&nbsp;
-  if (Object.keys(lengthOptions).length) {
-    const minTxt = min ? ` at least ${min}` : '';
-    const maxTxt = max ? ` at most ${max}` : <span class="branch-1 cbranch-no" title="branch not covered" >'';</span>
-    const message = `Length of ${key} must be${minTxt}${min &amp;&amp; max ? ' and' : ''}${maxTxt}`;
-&nbsp;
-    validator = validator.isLength(lengthOptions).withMessage(message);
-  }
-&nbsp;
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (isNumeric) {
-<span class="cstat-no" title="statement not covered" >    validator = validator.isNumeric().withMessage(`${key} must be a numeric string`);</span>
-  }
-&nbsp;
-  if (pattern) {
-    validator = validator
-      .matches(pattern)
-      .withMessage(`${key} does not match required format`);
-  }
-&nbsp;
-  return validator;
-};
+<span class="cstat-no" title="statement not covered" >  await client.close();</span>
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -228,14 +201,14 @@ export const stringValidation = ({
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
                 at 2025-04-21T07:18:33.210Z
             </div>
-        <script src="../../../../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../../../../sorter.js"></script>
-        <script src="../../../../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     

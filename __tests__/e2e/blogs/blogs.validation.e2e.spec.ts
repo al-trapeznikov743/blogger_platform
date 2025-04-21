@@ -1,22 +1,32 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import request from 'supertest';
 import express from 'express';
+import {ObjectId} from 'mongodb';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {setupApp} from '../../../src/setupApp';
 import {BlogInputDto} from '../../../src/blogs/dto/blog-dto';
 import {createBlog, getBlogDto} from '../../utils/blogs';
 import {clearDb, generateBasicAuthToken, makeLongString} from '../../utils';
+import {config} from '../../../src/core/settings/config';
+import {client, runDB} from '../../../src/db/mongo.db';
 
 describe('Blogs API body validation check', () => {
   const app = express();
   setupApp(app);
 
-  const randomId = Date.now().toString();
+  const randomId = new ObjectId().toString();
   const adminToken = generateBasicAuthToken();
   const correctTestBlogData: BlogInputDto = getBlogDto();
 
   beforeAll(async () => {
+    await runDB(config.MONGO_URL);
     await clearDb(app);
+  });
+
+  afterAll(async () => {
+    await client.close();
   });
 
   it(`❌ should not create blog when incorrect body passed; POST /blogs'`, async () => {

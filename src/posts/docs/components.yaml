@@ -18,7 +18,7 @@ components:
       type: string
       description: Content post
       maxLength: 1000
-    
+
     BlogId:
       $ref: '#/components/schemas/Id'
       description: Blog identifier
@@ -26,6 +26,11 @@ components:
     BlogName:
       type: string
       description: Blog name
+
+    CreatedAt:
+      type: string
+      format: date-time
+      description: Creation date
 
     PostInputModel:
       type: object
@@ -68,16 +73,18 @@ components:
           $ref: '#/components/schemas/BlogId'
         blogName:
           $ref: '#/components/schemas/BlogName'
-    
+        createdAt:
+          $ref: '#/components/schemas/CreatedAt'
+
     ValidationError:
       type: object
       properties:
         field:
           type: string
-          example: "name"
+          example: 'name'
         message:
           type: string
-          example: "Invalid name"
+          example: 'Invalid name'
 
     ValidationErrorResponse:
       type: object

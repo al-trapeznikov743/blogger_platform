@@ -1,5 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import request from 'supertest';
 import express from 'express';
+import {ObjectId} from 'mongodb';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {POSTS_PATH} from '../../../src/core/paths/paths';
 import {setupApp} from '../../../src/setupApp';
@@ -7,19 +10,26 @@ import {PostInputDto} from '../../../src/posts/dto/post-dto';
 import {createPost, getPostDto} from '../../utils/posts';
 import {clearDb, generateBasicAuthToken, makeLongString} from '../../utils';
 import {createBlog} from '../../utils/blogs';
+import {config} from '../../../src/core/settings/config';
+import {client, runDB} from '../../../src/db/mongo.db';
 
 describe('Posts API body validation check', () => {
   const app = express();
   setupApp(app);
 
-  const randomId = Date.now().toString();
+  const randomId = new ObjectId().toString();
   const adminToken = generateBasicAuthToken();
 
   beforeAll(async () => {
+    await runDB(config.MONGO_URL);
     await clearDb(app);
   });
 
-  it(`❌ should not create post when incorrect body passed; POST /posts'`, async () => {
+  afterAll(async () => {
+    await client.close();
+  });
+
+  it(`❌ should not create post when incorrect body passed; POST /posts`, async () => {
     const blog = await createBlog(app);
     const correctTestPostData: PostInputDto = getPostDto(blog.id);
 

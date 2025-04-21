@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import request from 'supertest';
 import {clearDb, generateBasicAuthToken} from '../../utils';
@@ -6,6 +8,8 @@ import {setupApp} from '../../../src/setupApp';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {BlogInputDto} from '../../../src/blogs/dto/blog-dto';
+import {config} from '../../../src/core/settings/config';
+import {client, runDB} from '../../../src/db/mongo.db';
 
 describe('Blogs API', () => {
   const app = express();
@@ -14,7 +18,12 @@ describe('Blogs API', () => {
   const adminToken = generateBasicAuthToken();
 
   beforeAll(async () => {
+    await runDB(config.MONGO_URL);
     await clearDb(app);
+  });
+
+  afterAll(async () => {
+    await client.close();
   });
 
   it('✅ should return blogs; GET /blogs', async () => {
@@ -36,7 +45,9 @@ describe('Blogs API', () => {
       id: expect.any(String),
       name: expect.any(String),
       description: expect.any(String),
-      websiteUrl: expect.any(String)
+      websiteUrl: expect.any(String),
+      createdAt: expect.any(String),
+      isMembership: expect.any(Boolean)
     });
   });
 
@@ -67,7 +78,9 @@ describe('Blogs API', () => {
       id: createdBlog.id,
       name: expect.any(String),
       description: expect.any(String),
-      websiteUrl: expect.any(String)
+      websiteUrl: expect.any(String),
+      createdAt: expect.any(String),
+      isMembership: expect.any(Boolean)
     });
   });
 

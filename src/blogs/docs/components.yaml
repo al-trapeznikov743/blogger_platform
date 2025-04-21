@@ -21,6 +21,15 @@ components:
       maxLength: 100
       example: https://www.google.com/
 
+    CreatedAt:
+      type: string
+      format: date-time
+      description: Creation date
+
+    IsMembership:
+      type: boolean
+      description: True if user has not expired membership subscription to blog
+
     BlogInputModel:
       type: object
       description: Fields for create and update blog
@@ -53,6 +62,10 @@ components:
           $ref: '#/components/schemas/Description'
         websiteUrl:
           $ref: '#/components/schemas/Url'
+        createdAt:
+          $ref: '#/components/schemas/CreatedAt'
+        isMembership:
+          $ref: '#/components/schemas/IsMembership'
 
     ValidationError:
       type: object

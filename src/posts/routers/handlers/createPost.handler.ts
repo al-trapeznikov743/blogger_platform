@@ -3,37 +3,34 @@ import {HttpStatus} from '../../../core/types/httpStatuses';
 import {createErrorMessages} from '../../../core/utils/error.utils';
 import {postsRepository} from '../../repositories/posts.repository';
 import {blogsRepository} from '../../../blogs/repositories/blogs.repository';
+import {mapMongoId} from '../../../db/utils';
 
-export const createPostHandler = ({body}: Request, res: Response) => {
-  // const errors = createVideoInputDtoValidation(body);
+export const createPostHandler = async ({body}: Request, res: Response) => {
+  try {
+    const blog = await blogsRepository.findById(body.blogId);
 
-  /* if (errors.length) {
-    res.status(HttpStatus.BAD_REQUEST_400).send(createErrorMessages(errors));
+    if (!blog) {
+      res.status(HttpStatus.NOT_FOUND_404).send(
+        createErrorMessages([
+          {
+            field: 'blogId',
+            message: `Blog with ID=${body.blogId} does not exist`
+          }
+        ])
+      );
 
-    return;
-  } */
+      return;
+    }
 
-  const blog = blogsRepository.findById(body.blogId);
+    const newPost = await postsRepository.create({
+      ...body,
+      blogId: blog._id.toString(),
+      blogName: blog.name,
+      createdAt: new Date().toISOString()
+    });
 
-  if (!blog) {
-    res.status(HttpStatus.NOT_FOUND_404).send(
-      createErrorMessages([
-        {
-          field: 'blogId',
-          message: `Blog with ID=${body.blogId} does not exist`
-        }
-      ])
-    );
-
-    return;
+    res.status(HttpStatus.CREATED_201).send(mapMongoId(newPost));
+  } catch (_: unknown) {
+    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
   }
-
-  const newPost = postsRepository.create({
-    ...body,
-    id: Date.now().toString(),
-    blogId: blog.id,
-    blogName: blog.name
-  });
-
-  res.status(HttpStatus.CREATED_201).send(newPost);
 };
