@@ -10,7 +10,6 @@ const bootstrap = async () => {
   setupApp(app);
 
   const PORT = config.PORT;
-
   await runDB(config.MONGO_URL);
 
   app.listen(PORT, () => {
