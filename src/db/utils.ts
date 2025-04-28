@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 
-type MongoObj = {
+export type MongoObj = {
   _id: ObjectId;
   [key: string]: any;
 };

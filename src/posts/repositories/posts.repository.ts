@@ -1,21 +1,62 @@
-import {ObjectId, WithId} from 'mongodb';
+import {ObjectId} from 'mongodb';
 import {postCollection} from '../../db/mongo.db';
-import {PostInputDto} from '../dto/post-dto';
-import {Post} from '../types/post';
+import {Post, PaginatedPosts, PostInputDto} from '../types/post';
+import {mapMongoId} from '../../db/utils';
+import {FullQueryOptions} from '../../shared/utils';
+
+const getPosts = (
+  filter: {[key: string]: any},
+  {pageSize, pageNumber, sortBy, sortDirection}: FullQueryOptions
+) =>
+  Promise.all([
+    postCollection
+      .find(filter)
+      .sort({[sortBy]: sortDirection})
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray(),
+    postCollection.countDocuments(filter)
+  ]);
 
 export const postsRepository = {
-  async findAll(): Promise<WithId<Post>[]> {
-    return postCollection.find().toArray();
+  async findMany(options: FullQueryOptions): Promise<PaginatedPosts> {
+    const {pageSize, pageNumber} = options;
+
+    const [posts, totalCount] = await getPosts({}, options);
+
+    return {
+      pagesCount: Math.ceil(totalCount / pageSize),
+      page: pageNumber,
+      pageSize,
+      totalCount,
+      items: posts.map(mapMongoId) as Post[]
+    };
   },
 
-  async findById(id: string): Promise<WithId<Post> | null> {
-    return postCollection.findOne({_id: new ObjectId(id)});
+  async findById(id: string): Promise<Post | null> {
+    const post = await postCollection.findOne({_id: new ObjectId(id)});
+
+    return post ? (mapMongoId(post) as Post) : post;
   },
 
-  async create(newPost: Post): Promise<WithId<Post>> {
-    const insertResult = await postCollection.insertOne(newPost);
+  async findPostsByBlogId(blogId: string, options: FullQueryOptions) {
+    const {pageNumber, pageSize} = options;
 
-    return {...newPost, _id: insertResult.insertedId};
+    const [posts, totalCount] = await getPosts({blogId}, options);
+
+    return {
+      pagesCount: Math.ceil(totalCount / pageSize),
+      page: pageNumber,
+      pageSize,
+      totalCount,
+      items: posts.map(mapMongoId) as Post[]
+    };
+  },
+
+  async create(post: Post): Promise<Post> {
+    const insertResult = await postCollection.insertOne(post);
+
+    return mapMongoId({...post, _id: insertResult.insertedId}) as Post;
   },
 
   async update(id: string, body: PostInputDto): Promise<void> {

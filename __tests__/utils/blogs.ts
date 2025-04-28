@@ -1,6 +1,6 @@
 import request from 'supertest';
 import {Express} from 'express';
-import {BlogInputDto} from '../../src/blogs/dto/blog-dto';
+import {BlogInputDto, BlogDtoForTest} from '../../src/blogs/types/blog';
 import {Blog} from '../../src/blogs/types/blog';
 import {BLOGS_PATH} from '../../src/core/paths/paths';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
@@ -22,8 +22,11 @@ export const getBlogById = async (app: Express, blogId: string): Promise<Blog> =
   return blogResponse.body;
 };
 
-export const createBlog = async (app: Express, blogDto?: BlogInputDto): Promise<Blog> => {
-  const defaultBlogData: BlogInputDto = getBlogDto();
+export const createBlog = async (
+  app: Express,
+  blogDto?: BlogDtoForTest
+): Promise<Blog> => {
+  let defaultBlogData: BlogInputDto = getBlogDto();
 
   const testBlogData = {...defaultBlogData, ...blogDto};
 

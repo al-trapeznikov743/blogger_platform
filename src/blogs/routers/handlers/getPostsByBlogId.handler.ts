@@ -1,17 +1,18 @@
 import {NextFunction, Request, Response} from 'express';
-import {HttpStatus} from '../../../core/types/httpStatuses';
-import {postsService} from '../../application/posts.service';
 import {getQueryOptions} from '../../../shared/utils';
+import {HttpStatus} from '../../../core/types/httpStatuses';
+import {postsService} from '../../../posts/application/posts.service';
 
-export const getPostsHandler = async (
+export const getPostsByBlogIdHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  const blogId = req.params.id;
   const options = getQueryOptions(req.query);
 
   try {
-    const posts = await postsService.findMany(options);
+    const posts = await postsService.findPostsByBlogId(blogId, options);
 
     res.status(HttpStatus.OK_200).send(posts);
   } catch (err: unknown) {

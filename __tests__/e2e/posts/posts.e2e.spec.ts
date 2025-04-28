@@ -34,8 +34,28 @@ describe('Posts API', () => {
 
     const response = await request(app).get(POSTS_PATH).expect(HttpStatus.OK_200);
 
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBeGreaterThanOrEqual(2);
+    const {pagesCount, page, pageSize, totalCount, items} = response.body;
+
+    expect(typeof pagesCount).toBe('number');
+    expect(typeof page).toBe('number');
+    expect(typeof pageSize).toBe('number');
+    expect(typeof totalCount).toBe('number');
+    expect(Array.isArray(items)).toBe(true);
+
+    expect(totalCount).toBeGreaterThanOrEqual(2);
+    expect(items.length).toBeGreaterThanOrEqual(2);
+
+    expect(items[0]).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        title: expect.any(String),
+        shortDescription: expect.any(String),
+        content: expect.any(String),
+        blogId: expect.any(String),
+        blogName: expect.any(String),
+        createdAt: expect.any(String)
+      })
+    );
   });
 
   it('✅ should return post by id; GET /posts/:id', async () => {

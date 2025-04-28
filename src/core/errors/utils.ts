@@ -1,4 +1,4 @@
-import {ErrorType} from '../types/errors';
+import {ErrorType} from './types';
 
 export const createErrorMessages = (
   errors: ErrorType[]

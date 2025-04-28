@@ -1,18 +1,17 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {blogsRepository} from '../../repositories/blogs.repository';
-import {mapMongoId} from '../../../db/utils';
+import {blogsService} from '../../application/blogs.service';
 
-export const createBlogHandler = async ({body}: Request, res: Response) => {
+export const createBlogHandler = async (
+  {body}: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const newBlog = await blogsRepository.create({
-      ...body,
-      createdAt: new Date().toISOString(),
-      isMembership: false
-    });
+    const createdBlog = await blogsService.create(body);
 
-    res.status(HttpStatus.CREATED_201).send(mapMongoId(newBlog));
-  } catch (_: unknown) {
-    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    res.status(HttpStatus.CREATED_201).send(createdBlog);
+  } catch (err: unknown) {
+    next(err);
   }
 };

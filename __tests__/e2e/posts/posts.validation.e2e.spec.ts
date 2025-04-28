@@ -6,7 +6,7 @@ import {ObjectId} from 'mongodb';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {POSTS_PATH} from '../../../src/core/paths/paths';
 import {setupApp} from '../../../src/setupApp';
-import {PostInputDto} from '../../../src/posts/dto/post-dto';
+import {PostInputDto} from '../../../src/posts/types/post';
 import {createPost, getPostDto} from '../../utils/posts';
 import {clearDb, generateBasicAuthToken, makeLongString} from '../../utils';
 import {createBlog} from '../../utils/blogs';
@@ -27,6 +27,18 @@ describe('Posts API body validation check', () => {
 
   afterAll(async () => {
     await client.close();
+  });
+
+  it('❌ should not get posts when incorrect query param; POST /blogs', async () => {
+    const blog = await createBlog(app);
+    await createPost(app, blog.id);
+
+    const emptyBodyDataSet = await request(app)
+      .get(POSTS_PATH)
+      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .expect(HttpStatus.BAD_REQUEST_400);
+
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);
   });
 
   it(`❌ should not create post when incorrect body passed; POST /posts`, async () => {

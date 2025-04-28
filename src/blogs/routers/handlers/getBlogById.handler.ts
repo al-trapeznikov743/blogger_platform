@@ -1,28 +1,17 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {createErrorMessages} from '../../../core/utils/error.utils';
-import {blogsRepository} from '../../repositories/blogs.repository';
-import {mapMongoId} from '../../../db/utils';
+import {blogsService} from '../../application/blogs.service';
 
-export const getBlogByIdHandler = async ({params}: Request, res: Response) => {
+export const getBlogByIdHandler = async (
+  {params}: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const resBlog = await blogsRepository.findById(params.id);
+    const blog = await blogsService.findById(params.id);
 
-    if (!resBlog) {
-      res.status(HttpStatus.NOT_FOUND_404).send(
-        createErrorMessages([
-          {
-            field: 'id',
-            message: 'Blog not found'
-          }
-        ])
-      );
-
-      return;
-    }
-
-    res.status(HttpStatus.OK_200).send(mapMongoId(resBlog));
-  } catch (_: unknown) {
-    res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+    res.status(HttpStatus.OK_200).send(blog);
+  } catch (err: unknown) {
+    next(err);
   }
 };

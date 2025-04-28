@@ -4,7 +4,7 @@ import {POSTS_PATH} from '../../src/core/paths/paths';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
 import {generateBasicAuthToken} from '.';
 import {Post} from '../../src/posts/types/post';
-import {PostInputDto} from '../../src/posts/dto/post-dto';
+import {PostInputDto} from '../../src/posts/types/post';
 
 export const getPostDto = (blogId: string): PostInputDto => {
   return {

@@ -7,19 +7,21 @@ import {createPostHandler} from './handlers/createPost.handler';
 import {deletePostHandler} from './handlers/deletePost.handler';
 import {idValidation} from '../../core/middlewares/validation/paramsValidation.middleware';
 import {validationResultMiddleware} from '../../core/middlewares/validation/validationResult.middleware';
-import {postInputDtoValitation} from '../validation/postInputDto.validation';
+import {queryValidation} from '../../core/middlewares/validation/queryValidation.middleware';
+import {postInputDtoValidation} from '../validation/postInputDto.validation';
+import {PostSortField} from '../enums';
 
 export const postsRouter = Router();
 
 postsRouter
-  .get('', getPostsHandler)
+  .get('', queryValidation(PostSortField), validationResultMiddleware, getPostsHandler)
 
   .get('/:id', idValidation(), validationResultMiddleware, getPostByIdHandler)
 
   .post(
     '',
     superAdminGuardMiddleware,
-    postInputDtoValitation,
+    postInputDtoValidation,
     validationResultMiddleware,
     createPostHandler
   )
@@ -28,7 +30,7 @@ postsRouter
     '/:id',
     superAdminGuardMiddleware,
     idValidation(),
-    postInputDtoValitation,
+    postInputDtoValidation,
     validationResultMiddleware,
     updatePostHandler
   )

@@ -1,16 +1,16 @@
 import {NextFunction, Request, Response} from 'express';
+import {postsService} from '../../../posts/application/posts.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {postsService} from '../../application/posts.service';
 
-export const updatePostHandler = async (
+export const createPostForBlogHandler = async (
   {params, body}: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    await postsService.update(params.id, body);
+    const post = await postsService.createPostForBlog(params.id, body);
 
-    res.sendStatus(HttpStatus.NO_CONTENT_204);
+    res.status(HttpStatus.CREATED_201).send(post);
   } catch (err: unknown) {
     next(err);
   }

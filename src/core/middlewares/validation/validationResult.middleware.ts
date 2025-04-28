@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {FieldValidationError, ValidationError, validationResult} from 'express-validator';
-import {ErrorType, ValidationErrorType} from '../../types/errors';
+import {ErrorType, ValidationErrorType} from '../../errors/types';
 import {HttpStatus} from '../../types/httpStatuses';
 
 export const createErrorMessages = (errors: ErrorType[]): ValidationErrorType => {

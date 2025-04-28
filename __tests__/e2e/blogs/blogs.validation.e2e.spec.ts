@@ -6,11 +6,12 @@ import {ObjectId} from 'mongodb';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {setupApp} from '../../../src/setupApp';
-import {BlogInputDto} from '../../../src/blogs/dto/blog-dto';
+import {BlogInputDto} from '../../../src/blogs/types/blog';
 import {createBlog, getBlogDto} from '../../utils/blogs';
 import {clearDb, generateBasicAuthToken, makeLongString} from '../../utils';
 import {config} from '../../../src/core/settings/config';
 import {client, runDB} from '../../../src/db/mongo.db';
+import {createPost} from '../../utils/posts';
 
 describe('Blogs API body validation check', () => {
   const app = express();
@@ -29,7 +30,18 @@ describe('Blogs API body validation check', () => {
     await client.close();
   });
 
-  it(`❌ should not create blog when incorrect body passed; POST /blogs'`, async () => {
+  it('❌ should not get blogs when incorrect query param; POST /blogs', async () => {
+    await createBlog(app);
+
+    const emptyBodyDataSet = await request(app)
+      .get(BLOGS_PATH)
+      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .expect(HttpStatus.BAD_REQUEST_400);
+
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);
+  });
+
+  it('❌ should not create blog when incorrect body passed; POST /blogs', async () => {
     await request(app)
       .post(BLOGS_PATH)
       .send(correctTestBlogData)
@@ -89,7 +101,7 @@ describe('Blogs API body validation check', () => {
     expect(isValidWebsiteUrl).toBe(false);
   });
 
-  it(`❌ should not update blog when incorrect body passed; PUT /blogs/:id'`, async () => {
+  it('❌ should not update blog when incorrect body passed; PUT /blogs/:id', async () => {
     const blog = await createBlog(app);
 
     await request(app)
@@ -159,7 +171,7 @@ describe('Blogs API body validation check', () => {
     expect(isValidWebsiteUrl).toBe(false);
   });
 
-  it(`❌ should not deleted blog when incorrect param; DELETE /blogs/:id'`, async () => {
+  it('❌ should not deleted blog when incorrect param; DELETE /blogs/:id', async () => {
     const blog = await createBlog(app);
 
     await request(app)
@@ -174,5 +186,25 @@ describe('Blogs API body validation check', () => {
       .expect(HttpStatus.NOT_FOUND_404);
 
     expect(blogNotFoundDataSet.body.errorsMessages).toHaveLength(1);
+  });
+
+  it('❌ should not get posts by blogId when non-existent blogId; GET /blogs/:id/posts', async () => {
+    const emptyBodyDataSet = await request(app)
+      .get(`${BLOGS_PATH}/${randomId}/posts`)
+      .expect(HttpStatus.NOT_FOUND_404);
+
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(1);
+  });
+
+  it('❌ should not get posts by blogId when incorrect query param; GET /blogs/:id/posts', async () => {
+    const blog = await createBlog(app);
+    await createPost(app, blog.id);
+
+    const emptyBodyDataSet = await request(app)
+      .get(`${BLOGS_PATH}/${blog.id}/posts`)
+      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .expect(HttpStatus.BAD_REQUEST_400);
+
+    expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);
   });
 });

@@ -7,9 +7,10 @@ import {createBlog, getBlogById, getBlogDto, updateBlog} from '../../utils/blogs
 import {setupApp} from '../../../src/setupApp';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
-import {BlogInputDto} from '../../../src/blogs/dto/blog-dto';
+import {BlogInputDto} from '../../../src/blogs/types/blog';
 import {config} from '../../../src/core/settings/config';
 import {client, runDB} from '../../../src/db/mongo.db';
+import {createPost} from '../../utils/posts';
 
 describe('Blogs API', () => {
   const app = express();
@@ -32,8 +33,42 @@ describe('Blogs API', () => {
 
     const response = await request(app).get(BLOGS_PATH).expect(HttpStatus.OK_200);
 
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBeGreaterThanOrEqual(2);
+    const {pagesCount, page, pageSize, totalCount, items} = response.body;
+
+    expect(typeof pagesCount).toBe('number');
+    expect(typeof page).toBe('number');
+    expect(typeof pageSize).toBe('number');
+    expect(typeof totalCount).toBe('number');
+    expect(Array.isArray(items)).toBe(true);
+
+    expect(totalCount).toBeGreaterThanOrEqual(2);
+    expect(items.length).toBeGreaterThanOrEqual(2);
+
+    expect(items[0]).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        name: expect.any(String),
+        description: expect.any(String),
+        websiteUrl: expect.any(String),
+        createdAt: expect.any(String),
+        isMembership: expect.any(Boolean)
+      })
+    );
+  });
+
+  it('✅ should return blogs filtered by searchNameTerm; GET /blogs', async () => {
+    await createBlog(app);
+    await createBlog(app, {name: 'TerMString-name'});
+
+    const response = await request(app)
+      .get(BLOGS_PATH)
+      .query({searchNameTerm: 'term'})
+      .expect(HttpStatus.OK_200);
+
+    const {totalCount, items} = response.body;
+
+    expect(totalCount).toBeGreaterThanOrEqual(1);
+    expect(items.length).toBeGreaterThanOrEqual(1);
   });
 
   it('✅ should return blog by id; GET /blogs/:id', async () => {
@@ -96,5 +131,45 @@ describe('Blogs API', () => {
       .get(`${BLOGS_PATH}/${createdBlog.id}`)
       .set('Authorization', adminToken)
       .expect(HttpStatus.NOT_FOUND_404);
+  });
+
+  it('✅ should create post for specific blog; POST /blogs/:id/posts', async () => {
+    const blog = await createBlog(app);
+
+    const response = await request(app)
+      .post(`${BLOGS_PATH}/${blog.id}/posts`)
+      .set('Authorization', adminToken)
+      .send({
+        title: 'Post title',
+        shortDescription: 'Short description',
+        content: 'Post content'
+      })
+      .expect(HttpStatus.CREATED_201);
+
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      title: expect.any(String),
+      shortDescription: expect.any(String),
+      content: expect.any(String),
+      blogId: expect.any(String),
+      blogName: expect.any(String),
+      createdAt: expect.any(String)
+    });
+  });
+
+  it('✅ should return posts by blog; GET /blogs/:id/posts', async () => {
+    const blog = await createBlog(app);
+
+    createPost(app, blog.id);
+    createPost(app, blog.id);
+
+    const response = await request(app)
+      .get(`${BLOGS_PATH}/${blog.id}/posts`)
+      .expect(HttpStatus.OK_200);
+
+    const {totalCount, items} = response.body;
+
+    expect(totalCount).toBeGreaterThanOrEqual(2);
+    expect(items.length).toBeGreaterThanOrEqual(2);
   });
 });
