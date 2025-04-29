@@ -56,6 +56,18 @@ describe('Posts API', () => {
         createdAt: expect.any(String)
       })
     );
+
+    await request(app)
+      .get(POSTS_PATH)
+      .query({pageNumber: null})
+      .expect(HttpStatus.OK_200);
+
+    await request(app).get(POSTS_PATH).query({pageSize: null}).expect(HttpStatus.OK_200);
+
+    await request(app)
+      .get(POSTS_PATH)
+      .query({pageNumber: null, pageSize: null})
+      .expect(HttpStatus.OK_200);
   });
 
   it('✅ should return post by id; GET /posts/:id', async () => {

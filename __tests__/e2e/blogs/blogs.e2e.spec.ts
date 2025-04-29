@@ -54,6 +54,28 @@ describe('Blogs API', () => {
         isMembership: expect.any(Boolean)
       })
     );
+
+    await request(app)
+      .get(BLOGS_PATH)
+      .query({pageNumber: null})
+      .expect(HttpStatus.OK_200);
+
+    await request(app).get(BLOGS_PATH).query({pageSize: null}).expect(HttpStatus.OK_200);
+
+    await request(app)
+      .get(BLOGS_PATH)
+      .query({pageNumber: null, pageSize: null})
+      .expect(HttpStatus.OK_200);
+  });
+
+  it('✅ should return blogs-2; GET /blogs', async () => {
+    await createBlog(app);
+    await createBlog(app);
+
+    const response = await request(app)
+      .get(BLOGS_PATH)
+      .query({pageSize: null})
+      .expect(HttpStatus.OK_200);
   });
 
   it('✅ should return blogs filtered by searchNameTerm; GET /blogs', async () => {

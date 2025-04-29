@@ -19,8 +19,8 @@ export const getQueryOptions = ({
   ...otherOptions
 }: InputQueryOptions): FullQueryOptions => {
   return {
-    pageSize: pageSize !== undefined ? Number(pageSize) : 10,
-    pageNumber: pageNumber !== undefined ? Number(pageNumber) : 1,
+    pageSize: pageSize ? Number(pageSize) : 10,
+    pageNumber: pageNumber ? Number(pageNumber) : 1,
     sortBy: sortBy ?? 'createdAt',
     sortDirection: sortDirection ?? 'desc',
     ...otherOptions
