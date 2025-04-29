@@ -25,6 +25,10 @@ export const validationResultMiddleware = (
     .formatWith(formatErrors)
     .array({onlyFirstError: true});
 
+  console.log('=========================================');
+  errors.forEach((err) => console.log('error##########: ', err));
+  console.log('=========================================');
+
   if (errors.length) {
     res.status(HttpStatus.BAD_REQUEST_400).json({errorsMessages: errors});
 

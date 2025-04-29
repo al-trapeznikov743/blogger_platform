@@ -66,6 +66,16 @@ describe('Blogs API', () => {
       .get(BLOGS_PATH)
       .query({pageNumber: null, pageSize: null})
       .expect(HttpStatus.OK_200);
+
+    await request(app)
+      .get(BLOGS_PATH)
+      .query({sortBy: '', sortDirection: ''})
+      .expect(HttpStatus.OK_200);
+
+    await request(app)
+      .get(BLOGS_PATH)
+      .query({pageNumber: null, pageSize: null, sortBy: null, sortDirection: null})
+      .expect(HttpStatus.OK_200);
   });
 
   it('✅ should return blogs-2; GET /blogs', async () => {

@@ -21,8 +21,8 @@ export const getQueryOptions = ({
   return {
     pageSize: pageSize ? Number(pageSize) : 10,
     pageNumber: pageNumber ? Number(pageNumber) : 1,
-    sortBy: sortBy ?? 'createdAt',
-    sortDirection: sortDirection ?? 'desc',
+    sortBy: sortBy?.length ? sortBy : 'createdAt',
+    sortDirection: sortDirection?.length ? sortDirection : 'desc',
     ...otherOptions
   };
 };
