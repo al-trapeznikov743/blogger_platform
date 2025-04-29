@@ -26,7 +26,12 @@ export const validationResultMiddleware = (
   const errors1 = errs.array();
 
   console.log('=========================================');
-  errors1.forEach((err) => console.log('error##########: ', err));
+  errors1.forEach((err) => {
+    if (['sortBy', 'sortDirection'].includes(err.field)) {
+      console.log('error##########: ', err);
+      console.log('req.query##########: ', req.query);
+    }
+  });
   console.log('=========================================');
 
   const errors = errs.array({onlyFirstError: true});
