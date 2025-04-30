@@ -13,6 +13,7 @@ import {getPostsByBlogIdHandler} from './handlers/getPostsByBlogId.handler';
 import {createPostForBlogHandler} from './handlers/createPostForBlog.handler';
 import {postInputWithoutBlogIdValidation} from '../../posts/validation/postInputDto.validation';
 import {BlogSortField} from '../enums';
+import {PostSortField} from '../../posts/enums';
 
 export const blogsRouter = Router();
 
@@ -24,7 +25,7 @@ blogsRouter
   .get(
     '/:id/posts',
     idValidation(),
-    queryValidation(BlogSortField),
+    queryValidation(PostSortField),
     validationResultMiddleware,
     getPostsByBlogIdHandler
   )
