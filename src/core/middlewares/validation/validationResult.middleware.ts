@@ -21,20 +21,9 @@ export const validationResultMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const errs = validationResult(req).formatWith(formatErrors);
-
-  const errors1 = errs.array();
-
-  console.log('=========================================');
-  errors1.forEach((err) => {
-    if (['sortBy', 'sortDirection'].includes(err.field)) {
-      console.log('error##########: ', err);
-      console.log('req.query##########: ', req.query);
-    }
-  });
-  console.log('=========================================');
-
-  const errors = errs.array({onlyFirstError: true});
+  const errors = validationResult(req)
+    .formatWith(formatErrors)
+    .array({onlyFirstError: true});
 
   if (errors.length) {
     res.status(HttpStatus.BAD_REQUEST_400).json({errorsMessages: errors});
