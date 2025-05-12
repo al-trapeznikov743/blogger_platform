@@ -1,11 +1,21 @@
-export interface Blog {
-  id: string;
+import {ObjectId} from 'mongodb';
+import {FullPaginationSorting} from '../../core/types/paginationAndSorting';
+
+export type BaseBlog = {
   name: string;
   description: string;
   websiteUrl: string;
   createdAt: string;
   isMembership: boolean;
-}
+};
+
+export type Blog = BaseBlog & {
+  id: string;
+};
+
+export type BlogDbType = BaseBlog & {
+  _id?: ObjectId;
+};
 
 export type BlogInputDto = {
   name: string;
@@ -25,4 +35,8 @@ export type PaginatedBlogs = {
   pageSize: number;
   totalCount: number;
   items: Blog[];
+};
+
+export type FindBlogsQueryOptions = FullPaginationSorting & {
+  searchNameTerm?: string;
 };

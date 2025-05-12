@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {postsService} from '../../application/posts.service';
+import {postsService} from '../../domain/posts.service';
 import {getQueryOptions} from '../../../shared/utils';
 
 export const getPostsHandler = async (

@@ -1,6 +1,6 @@
 import {postsRepository} from '../repositories/posts.repository';
 import {NotFoundError} from '../../core/errors';
-import {blogsService} from '../../blogs/application/blogs.service';
+import {blogsService} from '../../blogs/domain/blogs.service';
 import {PaginatedPosts, PostInputDto} from '../types/post';
 import {Post} from '../types/post';
 import {FullQueryOptions} from '../../shared/utils';
@@ -20,7 +20,7 @@ export const postsService = {
     return post;
   },
 
-  async create(body: Post): Promise<Post> {
+  async create(body: PostInputDto): Promise<Post> {
     const blog = await blogsService.findById(body.blogId);
 
     return postsRepository.create({

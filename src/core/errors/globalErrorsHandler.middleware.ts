@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../types/httpStatuses';
-import {NotFoundError} from '.';
+import {NotFoundError, UserAlreadyExistError} from '.';
 import {createErrorMessages} from './utils';
 
 export const globalErrorsHandler = (
@@ -10,9 +10,7 @@ export const globalErrorsHandler = (
   next: NextFunction
 ): void => {
   if (err instanceof NotFoundError) {
-    const httpStatus = HttpStatus.NOT_FOUND_404;
-
-    res.status(httpStatus).send(
+    res.status(HttpStatus.NOT_FOUND_404).send(
       createErrorMessages([
         {
           message: err.message,
@@ -20,6 +18,25 @@ export const globalErrorsHandler = (
         }
       ])
     );
+
+    return;
+  }
+
+  if (err instanceof UserAlreadyExistError) {
+    res.status(HttpStatus.BAD_REQUEST_400).send(
+      createErrorMessages([
+        {
+          message: err.message,
+          field: err.field
+        }
+      ])
+    );
+
+    return;
+  }
+
+  if (err) {
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR_500);
 
     return;
   }

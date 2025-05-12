@@ -1,12 +1,11 @@
-import {PaginatedBlogs} from './../types/blog';
+import {FindBlogsQueryOptions, PaginatedBlogs} from './../types/blog';
 import {blogsRepository} from './../repositories/blogs.repository';
 import {NotFoundError} from '../../core/errors';
 import {BlogInputDto} from '../types/blog';
 import {Blog} from '../types/blog';
-import {FullQueryOptions} from '../../shared/utils';
 
 export const blogsService = {
-  async findMany(options: FullQueryOptions): Promise<PaginatedBlogs> {
+  async findMany(options: FindBlogsQueryOptions): Promise<PaginatedBlogs> {
     return blogsRepository.findMany(options);
   },
 
@@ -20,7 +19,7 @@ export const blogsService = {
     return blog;
   },
 
-  async create(blog: Blog): Promise<Blog> {
+  async create(blog: BlogInputDto): Promise<Blog> {
     return blogsRepository.create({
       ...blog,
       createdAt: new Date().toISOString(),

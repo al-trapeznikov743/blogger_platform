@@ -8,12 +8,17 @@ import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {setupApp} from '../../../src/setupApp';
 import {BlogInputDto} from '../../../src/blogs/types/blog';
 import {createBlog, getBlogDto} from '../../utils/blogs';
-import {clearDb, generateBasicAuthToken, makeLongString} from '../../utils';
+import {
+  checkFieldsWithErrors,
+  clearDb,
+  generateBasicAuthToken,
+  makeLongString
+} from '../../utils';
 import {config} from '../../../src/core/settings/config';
 import {client, runDB} from '../../../src/db/mongo.db';
 import {createPost} from '../../utils/posts';
 
-describe('Blogs API body validation check', () => {
+describe('Blogs API validation check', () => {
   const app = express();
   setupApp(app);
 
@@ -30,7 +35,7 @@ describe('Blogs API body validation check', () => {
     await client.close();
   });
 
-  it('❌ should not get blogs when incorrect query param; POST /blogs', async () => {
+  it('❌ should not get blogs when incorrect query param; GET /blogs', async () => {
     await createBlog(app);
 
     const emptyBodyDataSet = await request(app)
@@ -78,8 +83,10 @@ describe('Blogs API body validation check', () => {
       .expect(HttpStatus.BAD_REQUEST_400);
 
     expect(invalidLengthDataSet.body.errorsMessages).toHaveLength(3);
+  });
 
-    const invalidWebsiteUrlDataSet = await request(app)
+  it('❌ should not create blog when incorrect body.websiteUrl; POST /blogs', async () => {
+    const invalidWebsiteUrlResult = await request(app)
       .post(BLOGS_PATH)
       .set('Authorization', adminToken)
       .send({
@@ -89,16 +96,9 @@ describe('Blogs API body validation check', () => {
       })
       .expect(HttpStatus.BAD_REQUEST_400);
 
-    expect(invalidWebsiteUrlDataSet.body.errorsMessages).toHaveLength(1);
+    expect(invalidWebsiteUrlResult.body.errorsMessages).toHaveLength(1);
 
-    const websiteUrlRegex =
-      /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
-
-    const isValidWebsiteUrl = websiteUrlRegex.test(
-      invalidWebsiteUrlDataSet.body.websiteUrl
-    );
-
-    expect(isValidWebsiteUrl).toBe(false);
+    checkFieldsWithErrors(invalidWebsiteUrlResult, ['websiteUrl']);
   });
 
   it('❌ should not update blog when incorrect body passed; PUT /blogs/:id', async () => {

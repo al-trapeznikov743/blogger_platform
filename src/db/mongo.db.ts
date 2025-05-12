@@ -1,21 +1,25 @@
 import {Collection, Db, MongoClient} from 'mongodb';
 import {config} from '../core/settings/config';
-import {Blog} from '../blogs/types/blog';
-import {Post} from '../posts/types/post';
+import {UserDbType} from '../users/types/user';
+import {BlogDbType} from '../blogs/types/blog';
+import {PostDbType} from '../posts/types/post';
 
+const USER_COLLECTION_NAME = 'users';
 const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 
 export let client: MongoClient;
-export let blogCollection: Collection<Blog>;
-export let postCollection: Collection<Post>;
+export let userCollection: Collection<UserDbType>;
+export let blogCollection: Collection<BlogDbType>;
+export let postCollection: Collection<PostDbType>;
 
 export const runDB = async (url: string): Promise<void> => {
   client = new MongoClient(url);
   const db: Db = client.db(config.DB_NAME);
 
-  blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
-  postCollection = db.collection<Post>(POST_COLLECTION_NAME);
+  userCollection = db.collection<UserDbType>(USER_COLLECTION_NAME);
+  blogCollection = db.collection<BlogDbType>(BLOG_COLLECTION_NAME);
+  postCollection = db.collection<PostDbType>(POST_COLLECTION_NAME);
 
   try {
     await client.connect();

@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {blogsService} from '../../domain/blogs.service';
 import {getQueryOptions} from '../../../shared/utils';
+import {usersQueryRepository} from '../../repositories/users.query.repository';
 
-export const getBlogsHandler = async (
+export const getUsersHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -11,9 +11,9 @@ export const getBlogsHandler = async (
   const options = getQueryOptions(req.query);
 
   try {
-    const blogs = await blogsService.findMany(options);
+    const users = await usersQueryRepository.findUsers(options);
 
-    res.status(HttpStatus.OK_200).send(blogs);
+    res.status(HttpStatus.OK_200).send(users);
   } catch (err: unknown) {
     next(err);
   }

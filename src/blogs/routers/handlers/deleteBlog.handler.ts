@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {blogsService} from '../../application/blogs.service';
+import {blogsService} from '../../domain/blogs.service';
 
 export const deleteBlogHandler = async (
   {params}: Request,

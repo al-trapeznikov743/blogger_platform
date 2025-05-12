@@ -6,6 +6,7 @@ import {
   ADMIN_PASSWORD,
   ADMIN_USERNAME
 } from '../../src/auth/middlewares/superAdminGuard.middleware';
+import {ErrorType} from '../../src/core/errors/types';
 
 export const clearDb = (app: Express) =>
   request(app).delete(`${TESTING_PATH}/all-data`).expect(HttpStatus.NO_CONTENT_204);
@@ -44,4 +45,15 @@ export const makeLongString = (
   }
 
   return result;
+};
+
+export const checkFieldsWithErrors = (
+  result: {
+    [key: string]: any;
+  },
+  fields: string[]
+) => {
+  const fieldsWithErrors = result.body.errorsMessages.map((err: ErrorType) => err.field);
+
+  fields.forEach((field) => expect(fieldsWithErrors).toContain(field));
 };

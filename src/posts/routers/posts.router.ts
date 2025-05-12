@@ -9,12 +9,12 @@ import {idValidation} from '../../core/middlewares/validation/paramsValidation.m
 import {validationResultMiddleware} from '../../core/middlewares/validation/validationResult.middleware';
 import {queryValidation} from '../../core/middlewares/validation/queryValidation.middleware';
 import {postInputDtoValidation} from '../validation/postInputDto.validation';
-import {PostSortField} from '../enums';
+import {PostSortFields} from '../enums';
 
 export const postsRouter = Router();
 
 postsRouter
-  .get('', queryValidation(PostSortField), validationResultMiddleware, getPostsHandler)
+  .get('', queryValidation(PostSortFields), validationResultMiddleware, getPostsHandler)
 
   .get('/:id', idValidation(), validationResultMiddleware, getPostByIdHandler)
 

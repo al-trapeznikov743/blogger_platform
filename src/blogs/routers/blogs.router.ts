@@ -12,20 +12,20 @@ import {updateBlogHandler} from './handlers/updateBlog.handler';
 import {getPostsByBlogIdHandler} from './handlers/getPostsByBlogId.handler';
 import {createPostForBlogHandler} from './handlers/createPostForBlog.handler';
 import {postInputWithoutBlogIdValidation} from '../../posts/validation/postInputDto.validation';
-import {BlogSortField} from '../enums';
-import {PostSortField} from '../../posts/enums';
+import {BlogSortFields} from '../enums';
+import {PostSortFields} from '../../posts/enums';
 
 export const blogsRouter = Router();
 
 blogsRouter
-  .get('', queryValidation(BlogSortField), validationResultMiddleware, getBlogsHandler)
+  .get('', queryValidation(BlogSortFields), validationResultMiddleware, getBlogsHandler)
 
   .get('/:id', idValidation(), validationResultMiddleware, getBlogByIdHandler)
 
   .get(
     '/:id/posts',
     idValidation(),
-    queryValidation(PostSortField),
+    queryValidation(PostSortFields),
     validationResultMiddleware,
     getPostsByBlogIdHandler
   )

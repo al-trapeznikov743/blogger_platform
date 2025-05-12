@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import {postsService} from '../../../posts/application/posts.service';
+import {postsService} from '../../../posts/domain/posts.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
 
 export const createPostForBlogHandler = async (

@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {getQueryOptions} from '../../../shared/utils';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {postsService} from '../../../posts/application/posts.service';
+import {postsService} from '../../../posts/domain/posts.service';
 
 export const getPostsByBlogIdHandler = async (
   req: Request,

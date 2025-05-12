@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 import {postCollection} from '../../db/mongo.db';
-import {Post, PaginatedPosts, PostInputDto} from '../types/post';
+import {Post, PaginatedPosts, PostInputDto, BasePost} from '../types/post';
 import {mapMongoId} from '../../db/utils';
 import {FullQueryOptions} from '../../shared/utils';
 
@@ -53,7 +53,7 @@ export const postsRepository = {
     };
   },
 
-  async create(post: Post): Promise<Post> {
+  async create(post: BasePost): Promise<Post> {
     const insertResult = await postCollection.insertOne(post);
 
     return mapMongoId({...post, _id: insertResult.insertedId}) as Post;

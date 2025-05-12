@@ -11,6 +11,12 @@ export type FullQueryOptions = FullPaginationSorting & {
   [key: string]: any;
 };
 
+const getValidValue = (val: any, defaultVal: number) => {
+  const numberVal = Number(val);
+
+  return numberVal && !isNaN(numberVal) ? numberVal : defaultVal;
+};
+
 export const getQueryOptions = ({
   pageSize,
   pageNumber,
@@ -18,11 +24,19 @@ export const getQueryOptions = ({
   sortDirection,
   ...otherOptions
 }: InputQueryOptions): FullQueryOptions => {
+  const additionalOptions: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(otherOptions)) {
+    if (typeof value === 'string' && value.length) {
+      additionalOptions[key] = value;
+    }
+  }
+
   return {
-    pageSize: pageSize ? Number(pageSize) : 10,
-    pageNumber: pageNumber ? Number(pageNumber) : 1,
+    pageSize: getValidValue(pageSize, 10),
+    pageNumber: getValidValue(pageNumber, 1),
     sortBy: sortBy?.length ? sortBy : 'createdAt',
     sortDirection: sortDirection?.length ? sortDirection : 'desc',
-    ...otherOptions
+    ...additionalOptions
   };
 };

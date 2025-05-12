@@ -1,18 +1,17 @@
-import {PaginatedBlogs} from './../types/blog';
+import {BaseBlog, FindBlogsQueryOptions, PaginatedBlogs} from './../types/blog';
 import {ObjectId} from 'mongodb';
 import {blogCollection} from '../../db/mongo.db';
 import {Blog, BlogInputDto} from '../types/blog';
 import {mapMongoId} from '../../db/utils';
-import {FullQueryOptions} from '../../shared/utils';
 
 export const blogsRepository = {
   async findMany({
-    searchNameTerm,
     sortBy,
     sortDirection,
     pageNumber,
-    pageSize
-  }: FullQueryOptions): Promise<PaginatedBlogs> {
+    pageSize,
+    searchNameTerm
+  }: FindBlogsQueryOptions): Promise<PaginatedBlogs> {
     const filter: any = {};
 
     if (searchNameTerm) {
@@ -43,7 +42,7 @@ export const blogsRepository = {
     return blog ? (mapMongoId(blog) as Blog) : blog;
   },
 
-  async create(blog: Blog): Promise<Blog> {
+  async create(blog: BaseBlog): Promise<Blog> {
     const insertResult = await blogCollection.insertOne(blog);
 
     return mapMongoId({...blog, _id: insertResult.insertedId}) as Blog;

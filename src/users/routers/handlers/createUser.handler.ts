@@ -1,16 +1,16 @@
 import {NextFunction, Request, Response} from 'express';
+import {usersService} from '../../domain/users.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {blogsService} from '../../domain/blogs.service';
 
-export const createBlogHandler = async (
+export const createUserHandler = async (
   {body}: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const createdBlog = await blogsService.create(body);
+    const createdUser = await usersService.create(body);
 
-    res.status(HttpStatus.CREATED_201).send(createdBlog);
+    res.status(HttpStatus.CREATED_201).send(createdUser);
   } catch (err: unknown) {
     next(err);
   }

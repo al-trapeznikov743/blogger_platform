@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {postsService} from '../../application/posts.service';
+import {postsService} from '../../domain/posts.service';
 
 export const createPostHandler = async (
   {body}: Request,

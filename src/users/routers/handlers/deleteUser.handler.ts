@@ -1,14 +1,14 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {postsService} from '../../domain/posts.service';
+import {usersService} from '../../domain/users.service';
 
-export const deletePostHandler = async (
+export const deleteUserHandler = async (
   {params}: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    await postsService.delete(params.id);
+    await usersService.delete(params.id);
 
     res.sendStatus(HttpStatus.NO_CONTENT_204);
   } catch (err: unknown) {

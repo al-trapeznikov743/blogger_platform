@@ -3,7 +3,7 @@ dotenv.config();
 import express from 'express';
 import request from 'supertest';
 import {clearDb, generateBasicAuthToken} from '../../utils';
-import {createBlog, getBlogById, getBlogDto, updateBlog} from '../../utils/blogs';
+import {createBlog, getBlogById, updateBlog} from '../../utils/blogs';
 import {setupApp} from '../../../src/setupApp';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
@@ -78,16 +78,6 @@ describe('Blogs API', () => {
       .expect(HttpStatus.OK_200);
   });
 
-  it('✅ should return blogs-2; GET /blogs', async () => {
-    await createBlog(app);
-    await createBlog(app);
-
-    const response = await request(app)
-      .get(BLOGS_PATH)
-      .query({pageSize: null})
-      .expect(HttpStatus.OK_200);
-  });
-
   it('✅ should return blogs filtered by searchNameTerm; GET /blogs', async () => {
     await createBlog(app);
     await createBlog(app, {name: 'TerMString-name'});
@@ -116,15 +106,6 @@ describe('Blogs API', () => {
       createdAt: expect.any(String),
       isMembership: expect.any(Boolean)
     });
-  });
-
-  it('✅ should create blog; POST /blogs', async () => {
-    const newBlog: BlogInputDto = {
-      ...getBlogDto(),
-      name: 'New best blog'
-    };
-
-    await createBlog(app, newBlog);
   });
 
   it('✅ should update blog; PUT /blogs/:id', async () => {

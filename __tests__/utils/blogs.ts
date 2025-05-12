@@ -26,9 +26,7 @@ export const createBlog = async (
   app: Express,
   blogDto?: BlogDtoForTest
 ): Promise<Blog> => {
-  let defaultBlogData: BlogInputDto = getBlogDto();
-
-  const testBlogData = {...defaultBlogData, ...blogDto};
+  const testBlogData = {...getBlogDto(), ...blogDto};
 
   const createdBlogResponse = await request(app)
     .post(BLOGS_PATH)

@@ -13,7 +13,7 @@ import {createBlog} from '../../utils/blogs';
 import {config} from '../../../src/core/settings/config';
 import {client, runDB} from '../../../src/db/mongo.db';
 
-describe('Posts API body validation check', () => {
+describe('Posts API validation check', () => {
   const app = express();
   setupApp(app);
 
