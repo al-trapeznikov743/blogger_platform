@@ -1,0 +1,25 @@
+summary: Add a new user
+tags: [Users]
+security:
+  - basicAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/UserInputModel'
+responses:
+  201:
+    description: User was successfully created
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/UserViewModel'
+  400:
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'
+  401:
+    description: Unauthorized

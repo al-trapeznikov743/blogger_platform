@@ -1,0 +1,98 @@
+components:
+  schemas:
+    Id:
+      type: string
+      description: Identifier
+
+    DefaultNumber:
+      type: integer
+      format: int32
+
+    CreatedAt:
+      type: string
+      format: date-time
+      description: creation date
+
+    UserInputModel:
+      type: object
+      required:
+        - login
+        - password
+        - email
+      properties:
+        login:
+          type: string
+          minLength: 3
+          maxLength: 10
+          pattern: '^[a-zA-Z0-9_-]*$'
+          description: Login
+        password:
+          type: string
+          minLength: 6
+          maxLength: 20
+          description: password
+        email:
+          type: string
+          format: email
+          pattern: '^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$'
+          example: example@example.com
+          description: Email
+
+    UserViewModel:
+      type: object
+      required:
+        - id
+        - login
+        - email
+        - createdAt
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        login:
+          type: string
+          description: Login
+        email:
+          type: string
+          description: Email
+        createdAt:
+          $ref: '#/components/schemas/CreatedAt'
+
+    UsersViewModel:
+      type: object
+      required:
+        - items
+      properties:
+        pagesCount:
+          $ref: '#/components/schemas/DefaultNumber'
+          description: Pages count
+        page:
+          $ref: '#/components/schemas/DefaultNumber'
+          description: Page number
+        pageSize:
+          $ref: '#/components/schemas/DefaultNumber'
+          description: Page size
+        totalCount:
+          $ref: '#/components/schemas/DefaultNumber'
+          description: Total count
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserViewModel'
+
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'name'
+        message:
+          type: string
+          example: 'Invalid name'
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errorsMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

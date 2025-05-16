@@ -4,6 +4,10 @@ info:
   version: 1.0.0
   description: BlogerPlatform API
 tags:
+  - name: Auth
+    description: API for managing auth
+  - name: Users
+    description: API for managing users
   - name: Blogs
     description: API for managing blogs
   - name: Posts
@@ -12,6 +16,18 @@ tags:
     description: API for clearing the database
 
 paths:
+  /auth/login:
+    post:
+      $ref: '../../auth/docs/login.yaml'
+
+  /users:
+    get:
+      $ref: '../../users/docs/getUsers.yaml'
+    post:
+      $ref: '../../users/docs/createUser.yaml'
+    delete:
+      $ref: '../../users/docs/deleteUser.yaml'
+
   /blogs:
     get:
       $ref: '../../blogs/docs/getBlogs.yaml'

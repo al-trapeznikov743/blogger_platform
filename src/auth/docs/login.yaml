@@ -1,0 +1,19 @@
+summary: Log in a user
+tags: [Auth]
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/LoginInputModel'
+responses:
+  204:
+    description: Authentication successful
+  400:
+    description: Input incorrect
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'
+  404:
+    description: Password or login incorrect
