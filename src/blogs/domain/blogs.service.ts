@@ -13,7 +13,7 @@ export const blogsService = {
     const blog = await blogsRepository.findById(id);
 
     if (!blog) {
-      throw new NotFoundError(`Blog with ID=${id} not found`);
+      throw new NotFoundError('id', `Blog with ID=${id} not found`);
     }
 
     return blog;
@@ -31,7 +31,7 @@ export const blogsService = {
     const blog = await blogsRepository.findById(id);
 
     if (!blog) {
-      throw new NotFoundError(`Blog with ID=${id} not found`);
+      throw new NotFoundError('id', `Blog with ID=${id} not found`);
     }
 
     return blogsRepository.update(id, body);
@@ -41,7 +41,7 @@ export const blogsService = {
     const blog = await blogsRepository.findById(id);
 
     if (!blog) {
-      throw new NotFoundError(`Blog with ID=${id} not found`);
+      throw new NotFoundError('id', `Blog with ID=${id} not found`);
     }
 
     return blogsRepository.delete(id);

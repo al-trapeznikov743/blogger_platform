@@ -170,6 +170,7 @@ describe('Blogs API', () => {
     });
   });
 
+  // fantom error?
   it('✅ should return posts by blog; GET /blogs/:id/posts', async () => {
     const blog = await createBlog(app);
 

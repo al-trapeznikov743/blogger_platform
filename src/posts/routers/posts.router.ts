@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {superAdminGuardMiddleware} from '../../auth/middlewares/superAdminGuard.middleware';
+import {baseAuthGuard} from '../../auth/middlewares/baseAuthGuard.middleware';
 import {getPostsHandler} from './handlers/getPosts.handler';
 import {getPostByIdHandler} from './handlers/getPostById.handler';
 import {updatePostHandler} from './handlers/updatePost.handler';
@@ -20,7 +20,7 @@ postsRouter
 
   .post(
     '',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     postInputDtoValidation,
     validationResultMiddleware,
     createPostHandler
@@ -28,7 +28,7 @@ postsRouter
 
   .put(
     '/:id',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     idValidation(),
     postInputDtoValidation,
     validationResultMiddleware,
@@ -37,7 +37,7 @@ postsRouter
 
   .delete(
     '/:id',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     idValidation(),
     validationResultMiddleware,
     deletePostHandler

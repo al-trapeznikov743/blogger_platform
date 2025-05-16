@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../types/httpStatuses';
-import {NotFoundError, UserAlreadyExistError} from '.';
+import {NotFoundError, BadRequestError, UnauthorizedError} from '.';
 import {createErrorMessages} from './utils';
 
 export const globalErrorsHandler = (
@@ -14,7 +14,7 @@ export const globalErrorsHandler = (
       createErrorMessages([
         {
           message: err.message,
-          field: 'id'
+          field: err.field
         }
       ])
     );
@@ -22,7 +22,7 @@ export const globalErrorsHandler = (
     return;
   }
 
-  if (err instanceof UserAlreadyExistError) {
+  if (err instanceof BadRequestError) {
     res.status(HttpStatus.BAD_REQUEST_400).send(
       createErrorMessages([
         {
@@ -33,6 +33,17 @@ export const globalErrorsHandler = (
     );
 
     return;
+  }
+
+  if (err instanceof UnauthorizedError) {
+    res.status(HttpStatus.UNAUTHORIZED_401).send(
+      createErrorMessages([
+        {
+          message: err.message,
+          field: 'loginOrPassword'
+        }
+      ])
+    );
   }
 
   if (err) {

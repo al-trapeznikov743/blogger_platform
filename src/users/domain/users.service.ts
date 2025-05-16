@@ -1,5 +1,5 @@
 import {bcryptService} from '../../auth/adapters/bcrypt.adapter';
-import {UserAlreadyExistError, NotFoundError} from '../../core/errors';
+import {BadRequestError, NotFoundError} from '../../core/errors';
 import {usersRepository} from '../repositories/users.repository';
 import {User, UserInputDto} from '../types/user';
 
@@ -13,7 +13,7 @@ export const usersService = {
     if (userByLogin || userByEmail) {
       const field = userByLogin ? 'login' : 'email';
 
-      throw new UserAlreadyExistError(field, `user with this ${field} already exist`);
+      throw new BadRequestError(field, `user with this ${field} already exist`);
     }
 
     const passwordHash = await bcryptService.generateHash(password);
@@ -32,7 +32,7 @@ export const usersService = {
     const user = await usersRepository.findById(id);
 
     if (!user) {
-      throw new NotFoundError(`User with ID=${id} not found`);
+      throw new NotFoundError('id', `User with ID=${id} not found`);
     }
 
     return usersRepository.delete(id);

@@ -6,7 +6,7 @@ import {deleteUserHandler} from './handlers/deleteUser.handler';
 import {queryValidation} from '../../core/middlewares/validation/queryValidation.middleware';
 import {UserSortFields} from '../enums';
 import {idValidation} from '../../core/middlewares/validation/paramsValidation.middleware';
-import {superAdminGuardMiddleware} from '../../auth/middlewares/superAdminGuard.middleware';
+import {baseAuthGuard} from '../../auth/middlewares/baseAuthGuard.middleware';
 import {userInputDtoValitation} from '../validation/userInputDto.validation';
 
 export const usersRouter = Router();
@@ -14,21 +14,21 @@ export const usersRouter = Router();
 usersRouter
   .get(
     '',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     queryValidation(UserSortFields),
     validationResultMiddleware,
     getUsersHandler
   )
   .post(
     '',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     userInputDtoValitation,
     validationResultMiddleware,
     createUserHandler
   )
   .delete(
     '/:id',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     idValidation(),
     validationResultMiddleware,
     deleteUserHandler

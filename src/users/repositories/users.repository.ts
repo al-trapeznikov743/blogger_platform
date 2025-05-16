@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 import {userCollection} from '../../db/mongo.db';
-import {BaseUser, User} from '../types/user';
+import {BaseUser, User, UserDbType} from '../types/user';
 import {getUserInView} from './utils';
 
 export const usersRepository = {
@@ -23,18 +23,26 @@ export const usersRepository = {
   async findById(id: string): Promise<User | null> {
     const user = await userCollection.findOne({_id: new ObjectId(id)});
 
-    return getUserInView(user) as User;
+    return getUserInView(user);
   },
 
   async findUserByLogin(login: string): Promise<User | null> {
     const user = await userCollection.findOne({login});
 
-    return getUserInView(user) as User;
+    return getUserInView(user);
   },
 
   async findUserByEmail(email: string): Promise<User | null> {
     const user = await userCollection.findOne({email});
 
-    return getUserInView(user) as User;
+    return getUserInView(user);
+  },
+
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
+    const user = await userCollection.findOne({
+      $or: [{email: loginOrEmail}, {login: loginOrEmail}]
+    });
+
+    return user;
   }
 };

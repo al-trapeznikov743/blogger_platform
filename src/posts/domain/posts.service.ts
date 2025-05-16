@@ -14,7 +14,7 @@ export const postsService = {
     const post = await postsRepository.findById(id);
 
     if (!post) {
-      throw new NotFoundError(`Post with ID=${id} not found`);
+      throw new NotFoundError('id', `Post with ID=${id} not found`);
     }
 
     return post;
@@ -35,7 +35,7 @@ export const postsService = {
     const post = await postsRepository.findById(id);
 
     if (!post) {
-      throw new NotFoundError(`Post with ID=${id} not found`);
+      throw new NotFoundError('id', `Post with ID=${id} not found`);
     }
 
     await blogsService.findById(body.blogId);
@@ -47,7 +47,7 @@ export const postsService = {
     const post = await postsRepository.findById(id);
 
     if (!post) {
-      throw new NotFoundError(`Post with ID=${id} not found`);
+      throw new NotFoundError('id', `Post with ID=${id} not found`);
     }
 
     return postsRepository.delete(id);

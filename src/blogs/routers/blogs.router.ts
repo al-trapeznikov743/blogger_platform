@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {superAdminGuardMiddleware} from '../../auth/middlewares/superAdminGuard.middleware';
+import {baseAuthGuard} from '../../auth/middlewares/baseAuthGuard.middleware';
 import {queryValidation} from './../../core/middlewares/validation/queryValidation.middleware';
 import {validationResultMiddleware} from '../../core/middlewares/validation/validationResult.middleware';
 import {idValidation} from '../../core/middlewares/validation/paramsValidation.middleware';
@@ -32,7 +32,7 @@ blogsRouter
 
   .post(
     '',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     blogInputDtoValitation,
     validationResultMiddleware,
     createBlogHandler
@@ -40,7 +40,7 @@ blogsRouter
 
   .post(
     '/:id/posts',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     idValidation(),
     postInputWithoutBlogIdValidation,
     validationResultMiddleware,
@@ -49,7 +49,7 @@ blogsRouter
 
   .put(
     '/:id',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     idValidation(),
     blogInputDtoValitation,
     validationResultMiddleware,
@@ -58,7 +58,7 @@ blogsRouter
 
   .delete(
     '/:id',
-    superAdminGuardMiddleware,
+    baseAuthGuard,
     idValidation(),
     validationResultMiddleware,
     deleteBlogHandler

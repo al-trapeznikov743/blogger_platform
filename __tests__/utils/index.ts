@@ -5,7 +5,7 @@ import {TESTING_PATH} from '../../src/core/paths/paths';
 import {
   ADMIN_PASSWORD,
   ADMIN_USERNAME
-} from '../../src/auth/middlewares/superAdminGuard.middleware';
+} from '../../src/auth/middlewares/baseAuthGuard.middleware';
 import {ErrorType} from '../../src/core/errors/types';
 
 export const clearDb = (app: Express) =>
