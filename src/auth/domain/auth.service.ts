@@ -16,7 +16,7 @@ export const authService = {
     const user = await usersRepository.findByLoginOrEmail(loginOrEmail);
 
     if (!user) {
-      throw new NotFoundError('loginOrEmail', `user not found`);
+      throw new UnauthorizedError('Incorrect login or password');
     }
 
     const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash);
