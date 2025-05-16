@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express';
+import {NextFunction, Response} from 'express';
 import {authService} from '../../domain/auth.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
 import {RequestWithBody} from '../../../core/types/requests';
@@ -12,7 +12,7 @@ export const loginHandler = async (
   try {
     await authService.loginUser(loginOrEmail, password);
 
-    res.status(HttpStatus.NO_CONTENT_204).send();
+    res.sendStatus(HttpStatus.NO_CONTENT_204);
   } catch (err: unknown) {
     next(err);
   }
