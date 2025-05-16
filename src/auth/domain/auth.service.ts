@@ -1,4 +1,4 @@
-import {NotFoundError, UnauthorizedError} from '../../core/errors';
+import {UnauthorizedError} from '../../core/errors';
 import {usersRepository} from '../../users/repositories/users.repository';
 import {getUserInView} from '../../users/repositories/utils';
 import {User} from '../../users/types/user';
