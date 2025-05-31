@@ -13,6 +13,34 @@ components:
           type: string
           description: Password
 
+    LoginViewModel:
+      type: object
+      description: Returned auth fields
+      required:
+        - accessToken
+      properties:
+        accessToken:
+          type: string
+          example: 'JWT access token'
+
+    AuthMeViewModel:
+      type: object
+      description: Returned user info
+      required:
+        - userId
+        - login
+        - email
+      properties:
+        userId:
+          type: string
+          description: User identifier
+        login:
+          type: string
+          description: User login
+        email:
+          type: string
+          description: User email
+
     ValidationError:
       type: object
       properties:

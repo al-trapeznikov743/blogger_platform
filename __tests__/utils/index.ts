@@ -57,3 +57,7 @@ export const checkFieldsWithErrors = (
 
   fields.forEach((field) => expect(fieldsWithErrors).toContain(field));
 };
+
+export const getInvalidQueryParams = () => {
+  return {pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'};
+};

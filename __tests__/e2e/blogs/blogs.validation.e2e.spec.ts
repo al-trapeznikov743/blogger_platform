@@ -12,6 +12,7 @@ import {
   checkFieldsWithErrors,
   clearDb,
   generateBasicAuthToken,
+  getInvalidQueryParams,
   makeLongString
 } from '../../utils';
 import {config} from '../../../src/core/settings/config';
@@ -40,7 +41,7 @@ describe('Blogs API validation check', () => {
 
     const emptyBodyDataSet = await request(app)
       .get(BLOGS_PATH)
-      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .query(getInvalidQueryParams())
       .expect(HttpStatus.BAD_REQUEST_400);
 
     expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);
@@ -202,7 +203,7 @@ describe('Blogs API validation check', () => {
 
     const emptyBodyDataSet = await request(app)
       .get(`${BLOGS_PATH}/${blog.id}/posts`)
-      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .query(getInvalidQueryParams())
       .expect(HttpStatus.BAD_REQUEST_400);
 
     expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);

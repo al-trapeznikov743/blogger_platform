@@ -7,8 +7,12 @@ requestBody:
       schema:
         $ref: './components.yaml#/components/schemas/LoginInputModel'
 responses:
-  204:
+  200:
     description: Authentication successful
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/LoginViewModel'
   400:
     description: Input incorrect
     content:

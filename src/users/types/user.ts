@@ -31,6 +31,12 @@ export type UserDtoForTest = {
   email?: string;
 };
 
+export type UserViewInfo = {
+  email: string;
+  login: string;
+  userId: string;
+};
+
 export type PaginatedUsers = {
   pagesCount: number;
   page: number;

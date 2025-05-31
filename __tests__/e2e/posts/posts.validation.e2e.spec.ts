@@ -8,7 +8,12 @@ import {POSTS_PATH} from '../../../src/core/paths/paths';
 import {setupApp} from '../../../src/setupApp';
 import {PostInputDto} from '../../../src/posts/types/post';
 import {createPost, getPostDto} from '../../utils/posts';
-import {clearDb, generateBasicAuthToken, makeLongString} from '../../utils';
+import {
+  clearDb,
+  generateBasicAuthToken,
+  getInvalidQueryParams,
+  makeLongString
+} from '../../utils';
 import {createBlog} from '../../utils/blogs';
 import {config} from '../../../src/core/settings/config';
 import {client, runDB} from '../../../src/db/mongo.db';
@@ -35,7 +40,7 @@ describe('Posts API validation check', () => {
 
     const emptyBodyDataSet = await request(app)
       .get(POSTS_PATH)
-      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .query(getInvalidQueryParams())
       .expect(HttpStatus.BAD_REQUEST_400);
 
     expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);

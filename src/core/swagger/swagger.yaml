@@ -12,6 +12,8 @@ tags:
     description: API for managing blogs
   - name: Posts
     description: API for managing posts
+  - name: Comments
+    description: API for managing comments
   - name: Testing
     description: API for clearing the database
 
@@ -19,6 +21,9 @@ paths:
   /auth/login:
     post:
       $ref: '../../auth/docs/login.yaml'
+  /auth/me:
+    get:
+      $ref: '../../auth/docs/authMe.yaml'
 
   /users:
     get:
@@ -40,6 +45,11 @@ paths:
       $ref: '../../blogs/docs/updateBlog.yaml'
     delete:
       $ref: '../../blogs/docs/deleteBlog.yaml'
+  /blogs/{id}/posts:
+    get:
+      $ref: '../../blogs/docs/searchPostsByBlogId.yaml'
+    post:
+      $ref: '../../blogs/docs/createPostForBlog.yaml'
 
   /posts:
     get:
@@ -53,6 +63,19 @@ paths:
       $ref: '../../posts/docs/updatePost.yaml'
     delete:
       $ref: '../../posts/docs/deletePost.yaml'
+  /posts/{id}/comments:
+    get:
+      $ref: '../../posts/docs/searchCommentsByPostId.yaml'
+    post:
+      $ref: '../../posts/docs/createComment.yaml'
+
+  /comments/{id}:
+    get:
+      $ref: '../../comments/docs/getCommentById.yaml'
+    put:
+      $ref: '../../comments/docs/updateComment.yaml'
+    delete:
+      $ref: '../../comments/docs/deleteComment.yaml'
 
   /testing/all-data:
     delete:
@@ -63,6 +86,10 @@ components:
     basicAuth:
       type: http
       scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     ValidationError:
       type: object

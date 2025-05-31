@@ -10,9 +10,9 @@ export const loginHandler = async (
   next: NextFunction
 ) => {
   try {
-    await authService.loginUser(loginOrEmail, password);
+    const accessToken = await authService.loginUser(loginOrEmail, password);
 
-    res.sendStatus(HttpStatus.NO_CONTENT_204);
+    res.status(HttpStatus.OK_200).send({accessToken});
   } catch (err: unknown) {
     next(err);
   }

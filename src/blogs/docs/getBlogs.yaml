@@ -1,11 +1,53 @@
 summary: Get blogs
 tags: [Blogs]
+parameters:
+  - name: searchNameTerm
+    in: query
+    required: false
+    schema:
+      type: string
+      default: null
+    description: Search term for blog
+
+  - name: pageNumber
+    in: query
+    required: false
+    schema:
+      type: integer
+      format: int32
+      default: 1
+    description: Page number to return (starts from 1)
+
+  - name: pageSize
+    in: query
+    required: false
+    schema:
+      type: integer
+      format: int32
+      default: 10
+    description: Number of items to return per page
+
+  - name: sortBy
+    in: query
+    required: false
+    schema:
+      type: string
+      default: createdAt
+    description: Field to sort by (default is createdAt)
+
+  - name: sortDirection
+    in: query
+    required: false
+    schema:
+      type: string
+      enum: [asc, desc]
+      default: desc
+    description: Sort direction asc or desc
+
 responses:
   200:
     description: List of all blogs
     content:
       application/json:
         schema:
-          type: array
-          items:
-            $ref: './components.yaml#/components/schemas/BlogViewModel'
+          $ref: './components.yaml#/components/schemas/PagedBlogViewModel'

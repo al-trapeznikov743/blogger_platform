@@ -1,5 +1,10 @@
 components:
   schemas:
+    Int32Type:
+      type: integer
+      format: int32
+      example: 0
+
     Id:
       type: string
       description: Identifier
@@ -29,6 +34,21 @@ components:
     IsMembership:
       type: boolean
       description: True if user has not expired membership subscription to blog
+
+    Title:
+      type: string
+      description: Title post
+      maxLength: 30
+
+    ShortDescription:
+      type: string
+      description: Description post
+      maxLength: 100
+
+    Content:
+      type: string
+      description: Content post
+      maxLength: 1000
 
     BlogInputModel:
       type: object
@@ -66,6 +86,65 @@ components:
           $ref: '#/components/schemas/CreatedAt'
         isMembership:
           $ref: '#/components/schemas/IsMembership'
+
+    PagedBlogViewModel:
+      type: object
+      required:
+        - items
+      properties:
+        pagesCount:
+          $ref: '#/components/schemas/Int32Type'
+          description: Total number of pages
+        page:
+          $ref: '#/components/schemas/Int32Type'
+          description: Current page number
+        pageSize:
+          $ref: '#/components/schemas/Int32Type'
+          description: Number of items returned per page
+        totalCount:
+          $ref: '#/components/schemas/Int32Type'
+          description: Total number of items matching the query
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlogViewModel'
+
+    PagedPostViewModel:
+      type: object
+      required:
+        - items
+      properties:
+        pagesCount:
+          $ref: '#/components/schemas/Int32Type'
+          description: Total number of pages
+        page:
+          $ref: '#/components/schemas/Int32Type'
+          description: Current page number
+        pageSize:
+          $ref: '#/components/schemas/Int32Type'
+          description: Number of items returned per page
+        totalCount:
+          $ref: '#/components/schemas/Int32Type'
+          description: Total number of items matching the query
+        items:
+          type: array
+          items:
+            $ref: '../../posts/docs/components.yaml#/components/schemas/PostViewModel'
+
+    PostForBlogInputModel:
+      type: object
+      description: Fields for create a new post for blog
+      required:
+        - title
+        - shortDescription
+        - content
+      properties:
+        title:
+          $ref: '#/components/schemas/Title'
+        shortDescription:
+          $ref: '#/components/schemas/ShortDescription'
+        content:
+          $ref: '#/components/schemas/Content'
 
     ValidationError:
       type: object

@@ -7,6 +7,7 @@ import {
   checkFieldsWithErrors,
   clearDb,
   generateBasicAuthToken,
+  getInvalidQueryParams,
   makeLongString
 } from '../../utils';
 import {client, runDB} from '../../../src/db/mongo.db';
@@ -38,7 +39,7 @@ describe('Users API', () => {
     const emptyBodyDataSet = await request(app)
       .get(USERS_PATH)
       .set('Authorization', adminToken)
-      .query({pageNumber: -5, pageSize: 9999, sortBy: 'as', sortDirection: 'sc'})
+      .query(getInvalidQueryParams())
       .expect(HttpStatus.BAD_REQUEST_400);
 
     expect(emptyBodyDataSet.body.errorsMessages).toHaveLength(4);

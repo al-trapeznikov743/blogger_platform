@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {HttpStatus} from '../types/httpStatuses';
-import {NotFoundError, BadRequestError, UnauthorizedError} from '.';
+import {NotFoundError, BadRequestError, UnauthorizedError, ForbiddenError} from '.';
 import {createErrorMessages} from './utils';
 
 export const globalErrorsHandler = (
@@ -44,6 +44,21 @@ export const globalErrorsHandler = (
         }
       ])
     );
+
+    return;
+  }
+
+  if (err instanceof ForbiddenError) {
+    res.status(HttpStatus.FORBIDDEN_403).send(
+      createErrorMessages([
+        {
+          message: err.message,
+          field: err.field
+        }
+      ])
+    );
+
+    return;
   }
 
   if (err) {

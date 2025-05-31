@@ -1,0 +1,34 @@
+summary: Add a new comment
+tags: [Posts]
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: 'The unique identifier of the post'
+    schema:
+      $ref: './components.yaml#/components/schemas/Id'
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/CommentInputModel'
+responses:
+  201:
+    description: The post was successfully created
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/CommentViewModel'
+  400:
+    description: Validation error
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'
+  401:
+    description: Unauthorized
+  404:
+    description: Post not found

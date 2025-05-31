@@ -1,0 +1,18 @@
+summary: Get comment by id
+tags: [Comments]
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: 'The unique identifier of the comment'
+    schema:
+      $ref: './components.yaml#/components/schemas/Id'
+responses:
+  200:
+    description: The requested comment
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/CommentViewModel'
+  404:
+    description: Comment not found

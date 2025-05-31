@@ -22,7 +22,8 @@
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
@@ -38,7 +39,6 @@
     "prettier": "^3.5.3",
     "supertest": "^7.1.0",
     "swagger-cli": "^4.0.4",
-    "ts-jest": "^29.3.1",
-    "typescript": "^5.8.2"
+    "ts-jest": "^29.3.1"
   }
 }

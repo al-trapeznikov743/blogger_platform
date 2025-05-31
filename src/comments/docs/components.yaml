@@ -1,0 +1,101 @@
+components:
+  schemas:
+    Int32Type:
+      type: integer
+      format: int32
+      example: 0
+
+    Id:
+      type: string
+      description: Identifier
+
+    CommentContent:
+      type: string
+      description: Comment content
+      minLength: 20
+      maxLength: 300
+
+    CreatedAt:
+      type: string
+      format: date-time
+      description: Creation date
+
+    CommentatorInfo:
+      type: object
+      description: User data
+      required:
+        - userId
+        - userLogin
+      properties:
+        userId:
+          $ref: '#/components/schemas/Id'
+        userLogin:
+          type: string
+          description: Login
+
+    CommentInputModel:
+      type: object
+      description: Fields for create comment
+      required:
+        - content
+      properties:
+        content:
+          $ref: '#/components/schemas/CommentContent'
+
+    CommentViewModel:
+      type: object
+      description: Returned comment fields
+      required:
+        - id
+        - content
+        - commentatorInfo
+        - createdAt
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        content:
+          $ref: '#/components/schemas/CommentContent'
+        commentatorInfo:
+          $ref: '#/components/schemas/CommentatorInfo'
+        createdAt:
+          $ref: '#/components/schemas/CreatedAt'
+
+    PagedCommentViewModel:
+      type: object
+      required:
+        - items
+      properties:
+        pagesCount:
+          $ref: '#/components/schemas/Int32Type'
+          description: Total number of pages
+        page:
+          $ref: '#/components/schemas/Int32Type'
+          description: Current page number
+        pageSize:
+          $ref: '#/components/schemas/Int32Type'
+          description: Number of items returned per page
+        totalCount:
+          $ref: '#/components/schemas/Int32Type'
+          description: Total number of items matching the query
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentViewModel'
+
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: 'name'
+        message:
+          type: string
+          example: 'Invalid name'
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errorsMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

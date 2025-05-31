@@ -1,6 +1,8 @@
+import {ObjectId} from 'mongodb';
 import {userCollection} from '../../db/mongo.db';
 import {FindUsersQueryOptions, PaginatedUsers, User} from '../types/user';
 import {getUserInView} from './utils';
+import {mapMongoId} from '../../db/utils';
 
 export const usersQueryRepository = {
   async findUsers({
@@ -39,5 +41,11 @@ export const usersQueryRepository = {
       totalCount,
       items: users.map((user) => getUserInView(user) as User)
     };
+  },
+
+  async findById(id: string): Promise<User | null> {
+    const user = await userCollection.findOne({_id: new ObjectId(id)});
+
+    return user ? (mapMongoId(user) as User) : user;
   }
 };

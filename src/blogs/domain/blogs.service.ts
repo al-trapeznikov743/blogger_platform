@@ -1,8 +1,6 @@
-import {FindBlogsQueryOptions, PaginatedBlogs} from './../types/blog';
 import {blogsRepository} from './../repositories/blogs.repository';
 import {NotFoundError} from '../../core/errors';
-import {BlogInputDto} from '../types/blog';
-import {Blog} from '../types/blog';
+import {Blog, BlogInputDto, FindBlogsQueryOptions, PaginatedBlogs} from '../types/blog';
 
 export const blogsService = {
   async findMany(options: FindBlogsQueryOptions): Promise<PaginatedBlogs> {

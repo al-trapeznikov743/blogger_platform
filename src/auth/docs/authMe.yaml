@@ -1,0 +1,13 @@
+summary: Get user info (authMe)
+tags: [Auth]
+security:
+  - bearerAuth: []
+responses:
+  200:
+    description: Success
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/AuthMeViewModel'
+  401:
+    description: Unauthorized

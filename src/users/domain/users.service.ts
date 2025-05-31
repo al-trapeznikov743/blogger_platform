@@ -4,6 +4,16 @@ import {usersRepository} from '../repositories/users.repository';
 import {User, UserInputDto} from '../types/user';
 
 export const usersService = {
+  async getUserById(id: string): Promise<User> {
+    const user = await usersRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundError('id', `User with ID=${id} not found`);
+    }
+
+    return user;
+  },
+
   async create({login, password, email}: UserInputDto): Promise<User> {
     const [userByLogin, userByEmail] = await Promise.all([
       usersRepository.findUserByLogin(login),

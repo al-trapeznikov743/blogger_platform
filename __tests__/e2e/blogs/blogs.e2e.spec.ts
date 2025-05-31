@@ -170,12 +170,10 @@ describe('Blogs API', () => {
     });
   });
 
-  // fantom error?
   it('✅ should return posts by blog; GET /blogs/:id/posts', async () => {
     const blog = await createBlog(app);
 
-    createPost(app, blog.id);
-    createPost(app, blog.id);
+    await Promise.all([createPost(app, blog.id), createPost(app, blog.id)]);
 
     const response = await request(app)
       .get(`${BLOGS_PATH}/${blog.id}/posts`)

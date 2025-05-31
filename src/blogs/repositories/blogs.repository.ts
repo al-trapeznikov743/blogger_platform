@@ -1,7 +1,12 @@
-import {BaseBlog, FindBlogsQueryOptions, PaginatedBlogs} from './../types/blog';
 import {ObjectId} from 'mongodb';
 import {blogCollection} from '../../db/mongo.db';
-import {Blog, BlogInputDto} from '../types/blog';
+import {
+  Blog,
+  BaseBlog,
+  BlogInputDto,
+  FindBlogsQueryOptions,
+  PaginatedBlogs
+} from '../types/blog';
 import {mapMongoId} from '../../db/utils';
 
 export const blogsRepository = {
