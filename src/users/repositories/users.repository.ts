@@ -1,13 +1,25 @@
 import {ObjectId} from 'mongodb';
 import {userCollection} from '../../db/mongo.db';
-import {BaseUser, User, UserDbType} from '../types/user';
+import {BaseUser, UserType, UserDbType, UserViewType} from '../types/user';
 import {getUserInView} from './utils';
+import {mapMongoId} from '../../db/utils';
 
 export const usersRepository = {
-  async create(user: BaseUser): Promise<User> {
+  async create(user: BaseUser): Promise<UserType> {
     const result = await userCollection.insertOne(user);
 
-    return getUserInView({...user, _id: result.insertedId}) as User;
+    return getUserInView({...user, _id: result.insertedId}) as UserType;
+  },
+
+  async updateUser(userId: string, updateFields: Record<string, any>): Promise<void> {
+    const updateResult = await userCollection.updateOne(
+      {_id: new ObjectId(userId)},
+      {$set: updateFields}
+    );
+
+    if (updateResult.matchedCount < 1) {
+      throw new Error('Update failed: user not found');
+    }
   },
 
   async delete(id: string): Promise<void> {
@@ -20,27 +32,37 @@ export const usersRepository = {
     }
   },
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<UserType | null> {
     const user = await userCollection.findOne({_id: new ObjectId(id)});
 
     return getUserInView(user);
   },
 
-  async findUserByLogin(login: string): Promise<User | null> {
-    const user = await userCollection.findOne({login});
-
-    return getUserInView(user);
-  },
-
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserByEmail(email: string): Promise<UserViewType | null> {
     const user = await userCollection.findOne({email});
 
-    return getUserInView(user);
+    return user ? (mapMongoId(user) as UserViewType) : user;
   },
 
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
-    return userCollection.findOne({
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserViewType | null> {
+    const user = await userCollection.findOne({
       $or: [{email: loginOrEmail}, {login: loginOrEmail}]
     });
+
+    return user ? (mapMongoId(user) as UserViewType) : user;
+  },
+
+  async findUserByConfirmCode(code: string): Promise<UserViewType | null> {
+    const user = await userCollection.findOne({
+      'emailConfirmation.confirmationCode': code
+    });
+
+    return user ? (mapMongoId(user) as UserViewType) : user;
+  },
+
+  async doesExistByLoginOrEmail(login: string, email: string): Promise<Boolean> {
+    const user = await userCollection.findOne({$or: [{email}, {login}]});
+
+    return !!user;
   }
 };

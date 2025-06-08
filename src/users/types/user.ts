@@ -1,11 +1,17 @@
 import {ObjectId} from 'mongodb';
 import {FullPaginationSorting} from '../../core/types/paginationAndSorting';
 
-export type User = {
+export type UserType = {
   id: string;
   login: string;
   email: string;
   createdAt: string;
+};
+
+export type emailConfirmation = {
+  confirmationCode: string;
+  expirationDate: string;
+  isConfirmed: boolean;
 };
 
 export type BaseUser = {
@@ -13,16 +19,21 @@ export type BaseUser = {
   email: string;
   passwordHash: string;
   createdAt: string;
+  emailConfirmation: emailConfirmation;
 };
 
 export type UserDbType = BaseUser & {
   _id?: ObjectId;
 };
 
+export type UserViewType = BaseUser & {
+  id: string;
+};
+
 export type UserInputDto = {
   login: string;
-  password: string;
   email: string;
+  password: string;
 };
 
 export type UserDtoForTest = {
@@ -31,18 +42,12 @@ export type UserDtoForTest = {
   email?: string;
 };
 
-export type UserViewInfo = {
-  email: string;
-  login: string;
-  userId: string;
-};
-
 export type PaginatedUsers = {
   pagesCount: number;
   page: number;
   pageSize: number;
   totalCount: number;
-  items: User[];
+  items: UserType[];
 };
 
 export type FindUsersQueryOptions = FullPaginationSorting & {

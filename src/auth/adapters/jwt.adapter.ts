@@ -4,9 +4,10 @@ import {UnauthorizedError} from '../../core/errors';
 
 export const jwtService = {
   async createToken(userId: string): Promise<string> {
-    return jwt.sign({userId}, config.AC_SECRET, {
-      expiresIn: '1h' // config.AC_TIME
-    } as SignOptions);
+    const payload = {userId};
+    const options = {expiresIn: '1h'} as SignOptions; // config.AC_TIME
+
+    return jwt.sign(payload, config.AC_SECRET, options);
   },
 
   async verifyToken(token: string): Promise<JwtPayload> {

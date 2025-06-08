@@ -1,0 +1,17 @@
+summary: Registration user
+tags: [Auth]
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/UserInputModel'
+responses:
+  204:
+    description: Registration successful
+  400:
+    description: Input incorrect
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'

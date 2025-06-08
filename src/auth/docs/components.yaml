@@ -1,5 +1,12 @@
 components:
   schemas:
+    Email:
+      type: string
+      format: email
+      pattern: '^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$'
+      example: example@example.com
+      description: Email
+
     LoginInputModel:
       type: object
       required:
@@ -40,6 +47,40 @@ components:
         email:
           type: string
           description: User email
+
+    UserInputModel:
+      type: object
+      required:
+        - login
+        - password
+        - email
+      properties:
+        login:
+          type: string
+          minLength: 3
+          maxLength: 10
+          pattern: '^[a-zA-Z0-9_-]*$'
+          description: Login
+        password:
+          type: string
+          minLength: 6
+          maxLength: 20
+          description: password
+        email:
+          $ref: '#/components/schemas/Email'
+
+    EmailConfirmModel:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'Confirmation code'
+
+    EmailResendModel:
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
 
     ValidationError:
       type: object

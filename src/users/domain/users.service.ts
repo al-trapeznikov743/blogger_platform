@@ -1,10 +1,11 @@
 import {bcryptService} from '../../auth/adapters/bcrypt.adapter';
 import {BadRequestError, NotFoundError} from '../../core/errors';
 import {usersRepository} from '../repositories/users.repository';
-import {User, UserInputDto} from '../types/user';
+import {UserType} from '../types/user';
+import {User} from './user.entity';
 
 export const usersService = {
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string): Promise<UserType> {
     const user = await usersRepository.findById(id);
 
     if (!user) {
@@ -14,28 +15,22 @@ export const usersService = {
     return user;
   },
 
-  async create({login, password, email}: UserInputDto): Promise<User> {
-    const [userByLogin, userByEmail] = await Promise.all([
-      usersRepository.findUserByLogin(login),
-      usersRepository.findUserByEmail(email)
-    ]);
+  async create(login: string, email: string, password: string): Promise<UserType> {
+    const param = login ? login : email;
 
-    if (userByLogin || userByEmail) {
-      const field = userByLogin ? 'login' : 'email';
+    const user = await usersRepository.findByLoginOrEmail(param);
+
+    if (!user) {
+      const field = login ? 'login' : 'email';
 
       throw new BadRequestError(field, `user with this ${field} already exist`);
     }
 
     const passwordHash = await bcryptService.generateHash(password);
 
-    const user = await usersRepository.create({
-      login,
-      email,
-      passwordHash,
-      createdAt: new Date().toISOString()
-    });
+    const newUser = new User(login, email, passwordHash);
 
-    return user;
+    return usersRepository.create(newUser);
   },
 
   async delete(id: string) {

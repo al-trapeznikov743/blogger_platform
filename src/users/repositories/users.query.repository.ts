@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 import {userCollection} from '../../db/mongo.db';
-import {FindUsersQueryOptions, PaginatedUsers, User} from '../types/user';
+import {FindUsersQueryOptions, PaginatedUsers, UserType} from '../types/user';
 import {getUserInView} from './utils';
 import {mapMongoId} from '../../db/utils';
 
@@ -39,13 +39,13 @@ export const usersQueryRepository = {
       page: pageNumber,
       pageSize,
       totalCount,
-      items: users.map((user) => getUserInView(user) as User)
+      items: users.map((user) => getUserInView(user) as UserType)
     };
   },
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<UserType | null> {
     const user = await userCollection.findOne({_id: new ObjectId(id)});
 
-    return user ? (mapMongoId(user) as User) : user;
+    return user ? (mapMongoId(user) as UserType) : user;
   }
 };

@@ -1,0 +1,17 @@
+summary: Email confirmation user
+tags: [Auth]
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: './components.yaml#/components/schemas/EmailConfirmModel'
+responses:
+  204:
+    description: Email was verified. Account was activated
+  400:
+    description: Input incorrect
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/components/schemas/ValidationErrorResponse'

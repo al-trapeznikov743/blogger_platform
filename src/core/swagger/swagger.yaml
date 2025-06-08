@@ -24,6 +24,15 @@ paths:
   /auth/me:
     get:
       $ref: '../../auth/docs/authMe.yaml'
+  /auth/registration:
+    post:
+      $ref: '../../auth/docs/registration.yaml'
+  /auth/registration-confirmation:
+    post:
+      $ref: '../../auth/docs/emailConfirm.yaml'
+  /auth/registration-email-resending:
+    post:
+      $ref: '../../auth/docs/emailResend.yaml'
 
   /users:
     get:
