@@ -10,37 +10,69 @@ const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 const COMMENT_COLLECTION_NAME = 'comment';
 
-export let client: MongoClient;
-export let userCollection: Collection<UserDbType>;
-export let blogCollection: Collection<BlogDbType>;
-export let postCollection: Collection<PostDbType>;
-export let commentCollection: Collection<CommentDbType>;
+export const db = {
+  client: {} as MongoClient,
 
-export const runDB = async (url: string): Promise<void> => {
-  client = new MongoClient(url);
-  const db: Db = client.db(config.DB_NAME);
+  getDb(): Db {
+    return this.client.db(config.DB_NAME);
+  },
 
-  userCollection = db.collection<UserDbType>(USER_COLLECTION_NAME);
-  blogCollection = db.collection<BlogDbType>(BLOG_COLLECTION_NAME);
-  postCollection = db.collection<PostDbType>(POST_COLLECTION_NAME);
-  commentCollection = db.collection<CommentDbType>(COMMENT_COLLECTION_NAME);
+  async run(url: string) {
+    try {
+      this.client = new MongoClient(url);
 
-  try {
-    await client.connect();
-    await db.command({ping: 1});
+      await this.client.connect();
+      await this.getDb().command({ping: 1});
 
-    console.log('✅ Connected to the database');
-  } catch (e) {
-    await client.close();
+      console.log('Connected successfully to mongo server');
+    } catch (e: unknown) {
+      console.error("Can't connect to mongo server", e);
 
-    throw new Error(`❌ Database not connected: ${e}`);
+      await this.client.close();
+    }
+  },
+
+  async stop() {
+    await this.client.close();
+
+    console.log('Connection successful closed');
+  },
+
+  async clearCollections() {
+    try {
+      //await this.getDb().dropDatabase()
+      const db: Db = this.getDb();
+
+      const collections = await db.listCollections().toArray();
+
+      for (const collection of collections) {
+        const collectionName = collection.name;
+        await db.collection(collectionName).deleteMany({});
+      }
+    } catch (e: unknown) {
+      console.error('Error in drop db:', e);
+
+      await this.stop();
+    }
+  },
+
+  getCollection<T extends Document>(name: string): Collection<T> {
+    return this.getDb().collection<T>(name);
+  },
+
+  userCollection(): Collection<UserDbType> {
+    return this.getDb().collection(USER_COLLECTION_NAME);
+  },
+
+  blogCollection(): Collection<BlogDbType> {
+    return this.getDb().collection(BLOG_COLLECTION_NAME);
+  },
+
+  postCollection(): Collection<PostDbType> {
+    return this.getDb().collection(POST_COLLECTION_NAME);
+  },
+
+  commentCollection(): Collection<CommentDbType> {
+    return this.getDb().collection(COMMENT_COLLECTION_NAME);
   }
 };
-
-export async function stopDb() {
-  if (!client) {
-    throw new Error(`❌ No active client`);
-  }
-
-  await client.close();
-}

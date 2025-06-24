@@ -8,6 +8,15 @@ export type UserType = {
   createdAt: string;
 };
 
+export type BaseUserData = {
+  login: string;
+  email: string;
+  passwordHash: string;
+  expirationDate?: string;
+  confirmationCode?: string;
+  isConfirmed?: boolean;
+};
+
 export type emailConfirmation = {
   confirmationCode: string;
   expirationDate: string;

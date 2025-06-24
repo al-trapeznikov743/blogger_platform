@@ -2,21 +2,20 @@ import dotenv from 'dotenv';
 dotenv.config();
 import request from 'supertest';
 import express from 'express';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 import {ObjectId} from 'mongodb';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
+import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
 import {BlogInputDto} from '../../../src/blogs/types/blog';
 import {createBlog, getBlogDto} from '../../utils/blogs';
 import {
   checkFieldsWithErrors,
-  clearDb,
   generateBasicAuthToken,
   getInvalidQueryParams,
   makeLongString
 } from '../../utils';
-import {config} from '../../../src/core/settings/config';
-import {client, runDB} from '../../../src/db/mongo.db';
 import {createPost} from '../../utils/posts';
 
 describe('Blogs API validation check', () => {
@@ -27,13 +26,18 @@ describe('Blogs API validation check', () => {
   const adminToken = generateBasicAuthToken();
   const correctTestBlogData: BlogInputDto = getBlogDto();
 
+  let mongoServer: MongoMemoryServer;
+
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
+
+    await db.run(mongoServer.getUri());
   });
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   it('❌ should not get blogs when incorrect query param; GET /blogs', async () => {

@@ -2,14 +2,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import request from 'supertest';
-import {clearDb, generateBasicAuthToken} from '../../utils';
+import {MongoMemoryServer} from 'mongodb-memory-server';
+import {generateBasicAuthToken} from '../../utils';
 import {createBlog, getBlogById, updateBlog} from '../../utils/blogs';
+import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
 import {BLOGS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {BlogInputDto} from '../../../src/blogs/types/blog';
-import {config} from '../../../src/core/settings/config';
-import {client, runDB} from '../../../src/db/mongo.db';
 import {createPost} from '../../utils/posts';
 
 describe('Blogs API', () => {
@@ -17,14 +17,18 @@ describe('Blogs API', () => {
   setupApp(app);
 
   const adminToken = generateBasicAuthToken();
+  let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
+
+    await db.run(mongoServer.getUri());
   });
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   it('✅ should return blogs; GET /blogs', async () => {

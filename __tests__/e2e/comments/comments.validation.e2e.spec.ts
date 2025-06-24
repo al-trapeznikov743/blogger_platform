@@ -2,13 +2,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import request from 'supertest';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 import {ObjectId} from 'mongodb';
-import {config} from '../../../src/core/settings/config';
 import {COMMENTS_PATH, POSTS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
-import {client, runDB} from '../../../src/db/mongo.db';
+import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
-import {clearDb, getInvalidQueryParams} from '../../utils';
+import {getInvalidQueryParams} from '../../utils';
 import {createUser, getUserDto} from '../../utils/users';
 import {userLogin} from '../../utils/auth';
 import {createBlog} from '../../utils/blogs';
@@ -27,11 +27,12 @@ describe('Comments API validation check', () => {
 
   let accessToken: string = '';
   let blog: Blog | null = null;
+  let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
 
+    await db.run(mongoServer.getUri());
     await createUser(app, userData);
 
     blog = await createBlog(app);
@@ -43,7 +44,9 @@ describe('Comments API validation check', () => {
   }, 15000);
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   describe('❌ should not create comment; POST /posts/{postId}/comments', () => {

@@ -46,7 +46,7 @@ export const authService = {
       throw new UnauthorizedError('Incorrect login or password');
     }
 
-    return getUserInView(user)!;
+    return user;
   },
 
   async registerUser(login: string, password: string, email: string) {
@@ -61,7 +61,7 @@ export const authService = {
 
     const passwordHash = await bcryptService.generateHash(password);
 
-    const newUser = new User(login, email, passwordHash);
+    const newUser = new User({login, email, passwordHash});
 
     await usersRepository.create(newUser);
 

@@ -1,6 +1,6 @@
 import request from 'supertest';
 import {Express} from 'express';
-import {UserDtoForTest} from '../../src/users/types/user';
+import {UserDtoForTest, UserInputDto} from '../../src/users/types/user';
 import {USERS_PATH} from '../../src/core/paths/paths';
 import {generateBasicAuthToken} from '.';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
@@ -13,7 +13,7 @@ export const generateUniqueString = (length: number) => {
     .join('');
 };
 
-export const getUserDto = () => {
+export const getUserDto = (): UserInputDto => {
   return {
     email: `${generateUniqueString(7)}@example.com`,
     login: generateUniqueString(10),

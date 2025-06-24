@@ -1,5 +1,5 @@
 import {ObjectId} from 'mongodb';
-import {commentCollection} from '../../db/mongo.db';
+import {db} from '../../db/mongo.db';
 import {BaseComment, Comment, CommentInputDto, PaginatedComments} from '../types/comment';
 import {getCommentInView} from './utils';
 import {FullPaginationSorting} from '../../core/types/paginationAndSorting';
@@ -11,14 +11,15 @@ export const commentsRepository = {
   ): Promise<PaginatedComments> {
     const filter: any = {postId};
 
-    const comments = await commentCollection
+    const comments = await db
+      .commentCollection()
       .find(filter)
       .sort({[sortBy]: sortDirection})
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .toArray();
 
-    const totalCount = await commentCollection.countDocuments(filter);
+    const totalCount = await db.commentCollection().countDocuments(filter);
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
@@ -30,22 +31,21 @@ export const commentsRepository = {
   },
 
   async findCommentById(id: string): Promise<Comment | null> {
-    const comment = await commentCollection.findOne({_id: new ObjectId(id)});
+    const comment = await db.commentCollection().findOne({_id: new ObjectId(id)});
 
     return comment ? (getCommentInView(comment) as Comment) : comment;
   },
 
   async create(comment: BaseComment): Promise<Comment> {
-    const insertResult = await commentCollection.insertOne(comment);
+    const insertResult = await db.commentCollection().insertOne(comment);
 
     return getCommentInView({...comment, _id: insertResult.insertedId}) as Comment;
   },
 
   async update(id: string, body: CommentInputDto): Promise<void> {
-    const updateResult = await commentCollection.updateOne(
-      {_id: new ObjectId(id)},
-      {$set: {...body}}
-    );
+    const updateResult = await db
+      .commentCollection()
+      .updateOne({_id: new ObjectId(id)}, {$set: {...body}});
 
     if (updateResult.matchedCount < 1) {
       throw new Error('Comment not exist');
@@ -53,7 +53,7 @@ export const commentsRepository = {
   },
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await commentCollection.deleteOne({
+    const deleteResult = await db.commentCollection().deleteOne({
       _id: new ObjectId(id)
     });
 

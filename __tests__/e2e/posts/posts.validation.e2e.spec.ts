@@ -2,21 +2,16 @@ import dotenv from 'dotenv';
 dotenv.config();
 import request from 'supertest';
 import express from 'express';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 import {ObjectId} from 'mongodb';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {POSTS_PATH} from '../../../src/core/paths/paths';
+import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
 import {PostInputDto} from '../../../src/posts/types/post';
 import {createPost, getPostDto} from '../../utils/posts';
-import {
-  clearDb,
-  generateBasicAuthToken,
-  getInvalidQueryParams,
-  makeLongString
-} from '../../utils';
+import {generateBasicAuthToken, getInvalidQueryParams, makeLongString} from '../../utils';
 import {createBlog} from '../../utils/blogs';
-import {config} from '../../../src/core/settings/config';
-import {client, runDB} from '../../../src/db/mongo.db';
 
 describe('Posts API validation check', () => {
   const app = express();
@@ -25,13 +20,18 @@ describe('Posts API validation check', () => {
   const randomId = new ObjectId().toString();
   const adminToken = generateBasicAuthToken();
 
+  let mongoServer: MongoMemoryServer;
+
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
+
+    await db.run(mongoServer.getUri());
   });
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   it('❌ should not get posts when incorrect query param; POST /blogs', async () => {

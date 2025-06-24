@@ -1,4 +1,5 @@
 import {randomUUID} from 'crypto';
+import {BaseUserData} from '../types/user';
 
 export class User {
   login: string;
@@ -11,15 +12,31 @@ export class User {
     isConfirmed: boolean;
   };
 
-  constructor(login: string, email: string, hash: string) {
+  constructor({
+    login,
+    email,
+    passwordHash,
+    expirationDate,
+    confirmationCode,
+    isConfirmed
+  }: BaseUserData) {
     this.login = login;
     this.email = email;
-    this.passwordHash = hash;
+    this.passwordHash = passwordHash;
     this.createdAt = new Date().toISOString();
+
     this.emailConfirmation = {
-      expirationDate: new Date().toISOString(),
-      confirmationCode: randomUUID(),
-      isConfirmed: false
+      expirationDate: expirationDate || User.getExpDate(),
+      confirmationCode: confirmationCode || randomUUID(),
+      isConfirmed: !!isConfirmed
     };
+  }
+
+  private static getExpDate(): string {
+    const date = new Date();
+
+    date.setMinutes(date.getMinutes() + 15);
+
+    return date.toISOString();
   }
 }

@@ -2,12 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import request from 'supertest';
-import {config} from '../../../src/core/settings/config';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 import {AUTH_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
-import {client, runDB} from '../../../src/db/mongo.db';
+import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
-import {clearDb} from '../../utils';
 import {createUser, getUserDto} from '../../utils/users';
 import {userLogin} from '../../utils/auth';
 
@@ -18,11 +17,12 @@ describe('Auth API', () => {
   const userData = getUserDto();
 
   let accessToken: string = '';
+  let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
 
+    await db.run(mongoServer.getUri());
     await createUser(app, userData);
 
     accessToken = await userLogin(app, {
@@ -32,7 +32,9 @@ describe('Auth API', () => {
   });
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   it('✅ should user login and return access token; GET /auth/me', async () => {

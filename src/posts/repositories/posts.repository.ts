@@ -1,5 +1,5 @@
 import {ObjectId} from 'mongodb';
-import {postCollection} from '../../db/mongo.db';
+import {db} from '../../db/mongo.db';
 import {Post, PaginatedPosts, PostInputDto, BasePost} from '../types/post';
 import {mapMongoId} from '../../db/utils';
 import {FullQueryOptions} from '../../shared/utils';
@@ -9,13 +9,14 @@ const getPosts = (
   {pageSize, pageNumber, sortBy, sortDirection}: FullQueryOptions
 ) =>
   Promise.all([
-    postCollection
+    db
+      .postCollection()
       .find(filter)
       .sort({[sortBy]: sortDirection})
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .toArray(),
-    postCollection.countDocuments(filter)
+    db.postCollection().countDocuments(filter)
   ]);
 
 export const postsRepository = {
@@ -34,7 +35,7 @@ export const postsRepository = {
   },
 
   async findById(id: string): Promise<Post | null> {
-    const post = await postCollection.findOne({_id: new ObjectId(id)});
+    const post = await db.postCollection().findOne({_id: new ObjectId(id)});
 
     return post ? (mapMongoId(post) as Post) : post;
   },
@@ -54,16 +55,15 @@ export const postsRepository = {
   },
 
   async create(post: BasePost): Promise<Post> {
-    const insertResult = await postCollection.insertOne(post);
+    const insertResult = await db.postCollection().insertOne(post);
 
     return mapMongoId({...post, _id: insertResult.insertedId}) as Post;
   },
 
   async update(id: string, body: PostInputDto): Promise<void> {
-    const updateResult = await postCollection.updateOne(
-      {_id: new ObjectId(id)},
-      {$set: {...body}}
-    );
+    const updateResult = await db
+      .postCollection()
+      .updateOne({_id: new ObjectId(id)}, {$set: {...body}});
 
     if (updateResult.matchedCount < 1) {
       throw new Error('Post not exist');
@@ -71,7 +71,7 @@ export const postsRepository = {
   },
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await postCollection.deleteOne({
+    const deleteResult = await db.postCollection().deleteOne({
       _id: new ObjectId(id)
     });
 

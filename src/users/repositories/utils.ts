@@ -1,7 +1,7 @@
 import {UserDbType} from '../types/user';
 
-export const getUserInView = (user: UserDbType | null) => {
-  return user
+export const getUserInView = (user: UserDbType | null) =>
+  user
     ? {
         id: user._id!.toString(),
         login: user.login,
@@ -9,4 +9,3 @@ export const getUserInView = (user: UserDbType | null) => {
         createdAt: user.createdAt
       }
     : user;
-};

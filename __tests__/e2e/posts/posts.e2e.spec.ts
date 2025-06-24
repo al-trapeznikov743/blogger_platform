@@ -2,28 +2,32 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import request from 'supertest';
-import {clearDb, generateBasicAuthToken} from '../../utils';
+import {generateBasicAuthToken} from '../../utils';
 import {createPost, getPostById, updatePost} from '../../utils/posts';
 import {setupApp} from '../../../src/setupApp';
 import {POSTS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
 import {createBlog} from '../../utils/blogs';
-import {config} from '../../../src/core/settings/config';
-import {client, runDB} from '../../../src/db/mongo.db';
+import {db} from '../../../src/db/mongo.db';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 
 describe('Posts API', () => {
   const app = express();
   setupApp(app);
 
   const adminToken = generateBasicAuthToken();
+  let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
+
+    await db.run(mongoServer.getUri());
   });
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   it('✅ should return posts; GET /posts', async () => {

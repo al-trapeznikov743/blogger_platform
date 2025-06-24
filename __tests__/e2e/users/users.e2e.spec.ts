@@ -2,10 +2,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import request from 'supertest';
+import {MongoMemoryServer} from 'mongodb-memory-server';
+import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
-import {clearDb, generateBasicAuthToken} from '../../utils';
-import {client, runDB} from '../../../src/db/mongo.db';
-import {config} from '../../../src/core/settings/config';
+import {generateBasicAuthToken} from '../../utils';
 import {createUser} from '../../utils/users';
 import {USERS_PATH} from '../../../src/core/paths/paths';
 import {HttpStatus} from '../../../src/core/types/httpStatuses';
@@ -15,14 +15,18 @@ describe('Users API', () => {
   setupApp(app);
 
   const adminToken = generateBasicAuthToken();
+  let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-    await runDB(config.MONGO_URL);
-    await clearDb(app);
+    mongoServer = await MongoMemoryServer.create();
+
+    await db.run(mongoServer.getUri());
   });
 
   afterAll(async () => {
-    await client.close();
+    await db.clearCollections();
+    await db.stop();
+    await mongoServer.stop();
   });
 
   it('✅ should return users; GET /users', async () => {
