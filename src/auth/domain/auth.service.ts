@@ -1,7 +1,6 @@
 import {BadRequestError, UnauthorizedError} from '../../core/errors';
 import {User} from '../../users/domain/user.entity';
 import {usersRepository} from '../../users/repositories/users.repository';
-import {getUserInView} from '../../users/repositories/utils';
 import {UserType, UserViewType} from '../../users/types/user';
 import {bcryptService} from '../adapters/bcrypt.adapter';
 import {emailTemplates} from '../adapters/emailTemplates';
