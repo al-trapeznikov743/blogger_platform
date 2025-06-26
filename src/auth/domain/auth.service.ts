@@ -92,7 +92,7 @@ export const authService = {
     const user = await usersRepository.findUserByEmail(email);
 
     if (!user) {
-      throw new BadRequestError('confirmResend', 'User is not exist');
+      throw new BadRequestError('email', 'User is not exist');
     }
 
     checkConfirmationEmail(user);
