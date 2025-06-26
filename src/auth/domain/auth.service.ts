@@ -49,13 +49,16 @@ export const authService = {
   },
 
   async registerUser(login: string, password: string, email: string) {
-    const isUserExist = await usersRepository.doesExistByLoginOrEmail(login, email);
+    const user = await usersRepository.findUserByLoginOrEmail(login, email);
 
-    if (isUserExist) {
-      throw new BadRequestError(
-        'loginOrEmail',
-        `A user with this login or email already exists`
-      );
+    if (user) {
+      let field = 'email';
+
+      if (login === user?.login && email !== user?.email) {
+        field = 'login';
+      }
+
+      throw new BadRequestError(field, 'A user with this login or email already exists');
     }
 
     const passwordHash = await bcryptService.generateHash(password);

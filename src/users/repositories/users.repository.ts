@@ -59,9 +59,12 @@ export const usersRepository = {
     return user ? (mapMongoId(user) as UserViewType) : user;
   },
 
-  async doesExistByLoginOrEmail(login: string, email: string): Promise<Boolean> {
+  async findUserByLoginOrEmail(
+    login: string,
+    email: string
+  ): Promise<UserViewType | null> {
     const user = await db.userCollection().findOne({$or: [{email}, {login}]});
 
-    return !!user;
+    return user ? (mapMongoId(user) as UserViewType) : user;
   }
 };
