@@ -3,6 +3,8 @@ import {config} from '../../core/settings/config';
 
 export const nodemailerService = {
   async sendEmail(email: string, code: string, template: (code: string) => string) {
+    console.log('config-90-#########: ', config);
+
     const transporter = nodemailer.createTransport(
       /* {
       service: 'gmail',
