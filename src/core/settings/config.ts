@@ -16,6 +16,9 @@ export const config: {
   // EMAIL: process.env.EMAIL || 'your-email@gmail.com',
   // EMAIL_PASS: process.env.EMAIL_PASS || 'your-app-password'
 
-  EMAIL: process.env.EMAIL || 'al.trapeznikov.744@gmail.com',
-  EMAIL_PASS: process.env.EMAIL_PASS || 'brsm vhqd ckwh lxpu'
+  EMAIL: process.env.EMAIL || 'a.a.trapeznikov@yandex.ru',
+  EMAIL_PASS: process.env.EMAIL_PASS || 'jhrzkbotcthmifev'
+
+  // EMAIL: process.env.EMAIL || 'al.trapeznikov.744@gmail.com',
+  // EMAIL_PASS: process.env.EMAIL_PASS || 'brsm vhqd ckwh lxpu'
 };
