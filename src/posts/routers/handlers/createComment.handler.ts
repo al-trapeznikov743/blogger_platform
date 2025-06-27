@@ -8,6 +8,8 @@ export const createCommentHandler = async (
   next: NextFunction
 ) => {
   try {
+    console.log('BODY_4904949094: ', {params, user, body});
+
     const comment = await commentsService.create(params.id, user!.id, body);
 
     res.status(HttpStatus.CREATED_201).send(comment);
