@@ -12,7 +12,7 @@ export const registrationEmailResendHandler = async (
   try {
     await authService.emailResending(email);
 
-    res.sendStatus(HttpStatus.CREATED_201);
+    res.sendStatus(HttpStatus.NO_CONTENT_204);
   } catch (err: unknown) {
     next(err);
   }

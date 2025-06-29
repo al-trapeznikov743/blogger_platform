@@ -1,3 +1,4 @@
+import {randomUUID} from 'crypto';
 import {BadRequestError, UnauthorizedError} from '../../core/errors';
 import {User} from '../../users/domain/user.entity';
 import {usersRepository} from '../../users/repositories/users.repository';
@@ -13,7 +14,9 @@ const checkConfirmationEmail = (user: UserViewType, code?: string) => {
   } = user;
 
   if (isConfirmed) {
-    throw new BadRequestError('confirmCode', 'Email already confirmed');
+    const field = code ? 'code' : 'email';
+
+    throw new BadRequestError(field, 'Email already confirmed');
   }
 
   if (new Date(expirationDate) < new Date()) {
@@ -78,7 +81,7 @@ export const authService = {
     const user = await usersRepository.findUserByConfirmCode(code);
 
     if (!user) {
-      throw new BadRequestError('confirmCode', 'Confirmation code is incorrect');
+      throw new BadRequestError('email', 'Confirmation code is incorrect');
     }
 
     checkConfirmationEmail(user, code);
@@ -97,9 +100,16 @@ export const authService = {
 
     checkConfirmationEmail(user);
 
+    const updateFields = {
+      'emailConfirmation.confirmationCode': randomUUID(),
+      'emailConfirmation.expirationDate': User.getExpDate()
+    };
+
+    await usersRepository.updateUser(user.id, updateFields);
+
     await nodemailerService.sendEmail(
       email,
-      user.emailConfirmation.confirmationCode,
+      updateFields['emailConfirmation.confirmationCode'],
       emailTemplates.registration
     );
   }

@@ -32,7 +32,7 @@ export class User {
     };
   }
 
-  private static getExpDate(): string {
+  static getExpDate(): string {
     const date = new Date();
 
     date.setMinutes(date.getMinutes() + 15);

@@ -5,12 +5,12 @@ export const nodemailerService = {
   async sendEmail(email: string, code: string, template: (code: string) => string) {
     const transporter = nodemailer.createTransport(
       /* {
-      service: 'gmail',
-      auth: {
-        user: config.EMAIL,
-        pass: config.EMAIL_PASS
-      }
-    } */
+        service: 'gmail',
+        auth: {
+          user: config.EMAIL,
+          pass: config.EMAIL_PASS
+        }
+      } */
       {
         host: 'smtp.yandex.ru',
         port: 465,
