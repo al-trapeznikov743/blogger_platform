@@ -11,7 +11,7 @@ import {BadRequestError} from '../../src/core/errors';
 import {checkConfirm, insertUserInDb} from '../utils/auth';
 import {bcryptService} from '../../src/auth/adapters/bcrypt.adapter';
 
-describe('Auth integration test', () => {
+describe('Auth registration integration test', () => {
   let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {

@@ -1,18 +1,15 @@
 import {Express} from 'express';
 import request from 'supertest';
+import {config} from '../../src/core/settings/config';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
 import {TESTING_PATH} from '../../src/core/paths/paths';
-import {
-  ADMIN_PASSWORD,
-  ADMIN_USERNAME
-} from '../../src/auth/middlewares/baseAuthGuard.middleware';
 import {ErrorType} from '../../src/core/errors/types';
 
 export const clearDb = (app: Express) =>
   request(app).delete(`${TESTING_PATH}/all-data`).expect(HttpStatus.NO_CONTENT_204);
 
 export function generateBasicAuthToken() {
-  const credentials = `${ADMIN_USERNAME}:${ADMIN_PASSWORD}`;
+  const credentials = `${config.ADMIN_USERNAME}:${config.ADMIN_PASSWORD}`;
   const token = Buffer.from(credentials).toString('base64');
 
   return `Basic ${token}`;

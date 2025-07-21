@@ -4,11 +4,13 @@ import {UserDbType} from '../users/types/user';
 import {BlogDbType} from '../blogs/types/blog';
 import {PostDbType} from '../posts/types/post';
 import {CommentDbType} from '../comments/types/comment';
+import {RefreshTokenDbType} from '../auth/types/auth';
 
 const USER_COLLECTION_NAME = 'users';
 const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 const COMMENT_COLLECTION_NAME = 'comment';
+const REFRESH_TOKEN_COLLECTION_NAME = 'refresh_token_whitelist';
 
 export const db = {
   client: {} as MongoClient,
@@ -74,5 +76,9 @@ export const db = {
 
   commentCollection(): Collection<CommentDbType> {
     return this.getDb().collection(COMMENT_COLLECTION_NAME);
+  },
+
+  refreshTokenCollection(): Collection<RefreshTokenDbType> {
+    return this.getDb().collection(REFRESH_TOKEN_COLLECTION_NAME);
   }
 };

@@ -37,10 +37,12 @@ describe('Comments API validation check', () => {
 
     blog = await createBlog(app);
 
-    accessToken = await userLogin(app, {
+    const loginData = await userLogin(app, {
       loginOrEmail: userData.login,
       password: userData.password
     });
+
+    accessToken = loginData.accessToken;
   }, 15000);
 
   afterAll(async () => {
@@ -137,7 +139,7 @@ describe('Comments API validation check', () => {
 
       await createUser(app, anotherUserData);
 
-      const anotherToken = await userLogin(app, {
+      const {accessToken: anotherToken} = await userLogin(app, {
         loginOrEmail: anotherUserData.login,
         password: anotherUserData.password
       });
@@ -175,7 +177,7 @@ describe('Comments API validation check', () => {
 
       await createUser(app, anotherUserData);
 
-      const anotherToken = await userLogin(app, {
+      const {accessToken: anotherToken} = await userLogin(app, {
         loginOrEmail: anotherUserData.login,
         password: anotherUserData.password
       });

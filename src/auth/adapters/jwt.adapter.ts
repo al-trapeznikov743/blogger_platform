@@ -1,18 +1,22 @@
 import jwt, {JwtPayload, SignOptions} from 'jsonwebtoken';
-import {config} from '../../core/settings/config';
+import {v4 as uuidv4} from 'uuid';
 import {UnauthorizedError} from '../../core/errors';
 
 export const jwtService = {
-  async createToken(userId: string): Promise<string> {
-    const payload = {userId};
-    const options = {expiresIn: '1h'} as SignOptions; // config.AC_TIME
+  async createToken(
+    userId: string,
+    expiresIn: string | number,
+    secret: string
+  ): Promise<string> {
+    const payload = {userId, jti: uuidv4()};
+    const options = {expiresIn} as SignOptions;
 
-    return jwt.sign(payload, config.AC_SECRET, options);
+    return jwt.sign(payload, secret, options);
   },
 
-  async verifyToken(token: string): Promise<JwtPayload> {
+  async verifyToken(token: string, secret: string): Promise<JwtPayload> {
     try {
-      return jwt.verify(token, config.AC_SECRET) as JwtPayload;
+      return jwt.verify(token, secret) as JwtPayload;
     } catch (error) {
       console.log('Verify token error');
       throw new UnauthorizedError('Incorrect login or password');

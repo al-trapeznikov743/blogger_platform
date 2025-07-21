@@ -25,10 +25,12 @@ describe('Auth API', () => {
     await db.run(mongoServer.getUri());
     await createUser(app, userData);
 
-    accessToken = await userLogin(app, {
+    const loginData = await userLogin(app, {
       loginOrEmail: userData.login,
       password: userData.password
     });
+
+    accessToken = loginData.accessToken;
   });
 
   afterAll(async () => {

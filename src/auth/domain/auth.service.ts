@@ -1,4 +1,5 @@
 import {randomUUID} from 'crypto';
+import {config} from '../../core/settings/config';
 import {BadRequestError, UnauthorizedError} from '../../core/errors';
 import {User} from '../../users/domain/user.entity';
 import {usersRepository} from '../../users/repositories/users.repository';
@@ -7,6 +8,9 @@ import {bcryptService} from '../adapters/bcrypt.adapter';
 import {emailTemplates} from '../adapters/emailTemplates';
 import {jwtService} from '../adapters/jwt.adapter';
 import {nodemailerService} from '../adapters/nodemailer.adapter';
+import {Tokens} from '../types/auth';
+import {authRepository} from '../repositories/auth.repository';
+import {parseTimeToSeconds} from '../../shared/utils';
 
 const checkConfirmationEmail = (user: UserViewType, code?: string) => {
   const {
@@ -28,11 +32,58 @@ const checkConfirmationEmail = (user: UserViewType, code?: string) => {
   }
 };
 
+const generateJwtPair = async (userId: string): Promise<Tokens> => {
+  const [accessToken, refreshToken] = await Promise.all([
+    jwtService.createToken(userId, config.AC_TIME, config.AC_SECRET),
+    jwtService.createToken(userId, config.RT_TIME, config.RT_SECRET)
+  ]);
+
+  await authRepository.deleteAllRefreshTokensForUser(userId);
+
+  const now = new Date();
+
+  const rtTimeSec = parseTimeToSeconds(config.RT_TIME as string);
+  const exp = new Date(now.getTime() + rtTimeSec * 1000);
+
+  await authRepository.addRefreshToken({
+    userId,
+    token: refreshToken,
+    createdAt: now.toISOString(),
+    expiresAt: exp.toISOString()
+  });
+
+  return {accessToken, refreshToken};
+};
+
 export const authService = {
-  async loginUser(loginOrEmail: string, password: string): Promise<string> {
+  async loginUser(loginOrEmail: string, password: string): Promise<Tokens> {
     const user = await this.checkUserCredentials(loginOrEmail, password);
 
-    return jwtService.createToken(user.id);
+    return generateJwtPair(user.id);
+  },
+
+  async logoutUser(oldRefreshToken: string) {
+    await jwtService.verifyToken(oldRefreshToken, config.RT_SECRET);
+
+    const token = await authRepository.findRefreshToken(oldRefreshToken);
+
+    if (!token) {
+      throw new UnauthorizedError('Invalid refresh token');
+    }
+
+    await authRepository.deleteRefreshToken(oldRefreshToken);
+  },
+
+  async refreshToken(oldRefreshToken: string) {
+    const {userId} = await jwtService.verifyToken(oldRefreshToken, config.RT_SECRET);
+
+    const token = await authRepository.findRefreshToken(oldRefreshToken);
+
+    if (!token) {
+      throw new UnauthorizedError('Invalid refresh token');
+    }
+
+    return generateJwtPair(userId);
   },
 
   async checkUserCredentials(loginOrEmail: string, password: string): Promise<UserType> {

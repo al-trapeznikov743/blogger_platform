@@ -1,19 +1,16 @@
-import {NextFunction, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {authService} from '../../domain/auth.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {RequestWithBody} from '../../../core/types/requests';
-import {LoginDto} from '../../types/auth';
 
-export const loginHandler = async (
-  {body: {loginOrEmail, password}}: RequestWithBody<LoginDto>,
+export const refreshTokenHandler = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const {accessToken, refreshToken} = await authService.loginUser(
-      loginOrEmail,
-      password
-    );
+    const oldRefreshToken = req.cookies.refreshToken;
+
+    const {accessToken, refreshToken} = await authService.refreshToken(oldRefreshToken);
 
     res
       .cookie('refreshToken', refreshToken, {

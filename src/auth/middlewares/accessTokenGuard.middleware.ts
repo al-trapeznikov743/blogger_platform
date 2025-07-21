@@ -1,4 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
+import {config} from '../../core/settings/config';
 import {IdType} from './../../core/types/shared';
 import {HttpStatus} from '../../core/types/httpStatuses';
 import {jwtService} from '../adapters/jwt.adapter';
@@ -22,7 +23,7 @@ export const accessTokenGuard = async (
     return;
   }
 
-  const payload = await jwtService.verifyToken(token);
+  const payload = await jwtService.verifyToken(token, config.AC_SECRET);
 
   if (payload) {
     const {userId} = payload;

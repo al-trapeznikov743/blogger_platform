@@ -32,12 +32,12 @@ describe('Comments API', () => {
 
     blog = await createBlog(app);
 
-    const token = await userLogin(app, {
+    const loginData = await userLogin(app, {
       loginOrEmail: userData.login,
       password: userData.password
     });
 
-    accessToken = token;
+    accessToken = loginData.accessToken;
   }, 15000);
 
   afterAll(async () => {
