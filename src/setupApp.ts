@@ -10,6 +10,7 @@ import {
   BLOGS_PATH,
   COMMENTS_PATH,
   POSTS_PATH,
+  SECURITY_DEVICES_PATH,
   TESTING_PATH,
   USERS_PATH
 } from './core/paths/paths';
@@ -17,8 +18,13 @@ import {globalErrorsHandler} from './core/errors/globalErrorsHandler.middleware'
 import {usersRouter} from './users/routers/users.router';
 import {authRouter} from './auth/routers/auth.router';
 import {commentsRouter} from './comments/routers/comments.router';
+import {devicesRouter} from './devices/routers/devices.router';
+// import {apiRequestLogger} from './logs/middlewares/apiRequestLogger.middleware';
 
 export const setupApp = (app: Express) => {
+  app.set('trust proxy', true);
+  // app.use(apiRequestLogger);
+
   app.use(express.json());
   app.use(cookieParser());
 
@@ -31,6 +37,7 @@ export const setupApp = (app: Express) => {
   app.use(BLOGS_PATH, blogsRouter);
   app.use(POSTS_PATH, postsRouter);
   app.use(COMMENTS_PATH, commentsRouter);
+  app.use(SECURITY_DEVICES_PATH, devicesRouter);
   app.use(TESTING_PATH, testingRouter);
 
   app.use(globalErrorsHandler);

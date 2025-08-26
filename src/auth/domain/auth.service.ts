@@ -9,8 +9,9 @@ import {emailTemplates} from '../adapters/emailTemplates';
 import {jwtService} from '../adapters/jwt.adapter';
 import {nodemailerService} from '../adapters/nodemailer.adapter';
 import {Tokens} from '../types/auth';
-import {authRepository} from '../repositories/auth.repository';
 import {parseTimeToSeconds} from '../../shared/utils';
+import {devicesService} from '../../devices/domain/devices.service';
+import {RequestDevice, RequestUserData} from '../../devices/types/devices';
 
 const checkConfirmationEmail = (user: UserViewType, code?: string) => {
   const {
@@ -32,58 +33,84 @@ const checkConfirmationEmail = (user: UserViewType, code?: string) => {
   }
 };
 
-const generateJwtPair = async (userId: string): Promise<Tokens> => {
+const getTokenPeriod = () => {
+  const atTimeSec = parseTimeToSeconds(config.AC_TIME as string);
+  const rtTimeSec = parseTimeToSeconds(config.RT_TIME as string);
+
+  const iat = Math.floor(Date.now() / 1000);
+
+  const atExp = iat + atTimeSec;
+  const rtExp = iat + rtTimeSec;
+
+  const deviceIat = new Date(iat * 1000);
+  const deviceExp = new Date(rtExp * 1000);
+
+  return {
+    iat,
+    atExp,
+    rtExp,
+    deviceIat,
+    deviceExp
+  };
+};
+
+const createOrUpdateSession = async (
+  userId: string,
+  {ip, device}: RequestUserData,
+  deviceId?: string
+): Promise<Tokens> => {
+  const {iat, atExp, rtExp, deviceIat, deviceExp} = getTokenPeriod();
+
+  let currentDeviceId = deviceId;
+
+  if (currentDeviceId) {
+    await devicesService.updateDeviceSession(currentDeviceId, {
+      ip,
+      iat: deviceIat,
+      exp: deviceExp
+    });
+  } else {
+    currentDeviceId = await devicesService.createDeviceSession({
+      userId,
+      ip,
+      device,
+      iat: deviceIat,
+      exp: deviceExp
+    });
+  }
+
   const [accessToken, refreshToken] = await Promise.all([
-    jwtService.createToken(userId, config.AC_TIME, config.AC_SECRET),
-    jwtService.createToken(userId, config.RT_TIME, config.RT_SECRET)
+    jwtService.createToken({userId, iat, exp: atExp}, config.AC_SECRET),
+
+    jwtService.createToken(
+      {userId, deviceId: currentDeviceId, iat, exp: rtExp},
+      config.RT_SECRET
+    )
   ]);
 
-  await authRepository.deleteAllRefreshTokensForUser(userId);
-
-  const now = new Date();
-
-  const rtTimeSec = parseTimeToSeconds(config.RT_TIME as string);
-  const exp = new Date(now.getTime() + rtTimeSec * 1000);
-
-  await authRepository.addRefreshToken({
-    userId,
-    token: refreshToken,
-    createdAt: now.toISOString(),
-    expiresAt: exp.toISOString()
-  });
+  // console.log('accessToken: ', accessToken);
+  // console.log('NEW_refreshToken: ', refreshToken);
 
   return {accessToken, refreshToken};
 };
 
 export const authService = {
-  async loginUser(loginOrEmail: string, password: string): Promise<Tokens> {
-    const user = await this.checkUserCredentials(loginOrEmail, password);
+  async loginUser(
+    loginOrEmail: string,
+    password: string,
+    requestData: RequestUserData
+  ): Promise<Tokens> {
+    const {id: userId} = await this.checkUserCredentials(loginOrEmail, password);
 
-    return generateJwtPair(user.id);
+    return createOrUpdateSession(userId, requestData);
   },
 
-  async logoutUser(oldRefreshToken: string) {
-    await jwtService.verifyToken(oldRefreshToken, config.RT_SECRET);
-
-    const token = await authRepository.findRefreshToken(oldRefreshToken);
-
-    if (!token) {
-      throw new UnauthorizedError('Invalid refresh token');
-    }
-
-    await authRepository.deleteRefreshToken(oldRefreshToken);
+  async logoutUser(device: RequestDevice) {
+    await devicesService.deleteUserDeviceById(device.deviceId, device);
   },
 
-  async refreshToken(oldRefreshToken: string) {
-    const {userId} = await jwtService.verifyToken(oldRefreshToken, config.RT_SECRET);
-
-    const token = await authRepository.findRefreshToken(oldRefreshToken);
-
-    if (!token) {
-      throw new UnauthorizedError('Invalid refresh token');
-    }
-
-    return generateJwtPair(userId);
+  async refreshToken({userId, deviceId}: RequestDevice, requestData: RequestUserData) {
+    return createOrUpdateSession(userId, requestData, deviceId);
   },
 
   async checkUserCredentials(loginOrEmail: string, password: string): Promise<UserType> {

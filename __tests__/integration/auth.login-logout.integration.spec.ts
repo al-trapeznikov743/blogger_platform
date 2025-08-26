@@ -7,7 +7,7 @@ import {MongoMemoryServer} from 'mongodb-memory-server';
 import {db} from '../../src/db/mongo.db';
 import {setupApp} from '../../src/setupApp';
 import {createUser, getUserDto} from '../utils/users';
-import {userLogin, userLogout, refreshTokenTest} from '../utils/auth';
+import {userLogin, userLogout, refreshTokenTest, checkDevice, delay} from '../utils/auth';
 import {AUTH_PATH} from '../../src/core/paths/paths';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
 import {UserInputDto, UserViewType} from '../../src/users/types/user';
@@ -27,6 +27,9 @@ describe('Auth login-logout integration test', () => {
 
     userData = getUserDto();
     user = await createUser(app, userData);
+
+    process.env.RATE_LIMIT = '50';
+    process.env.RATE_LIMIT_SEC = '100';
   });
 
   afterAll(async () => {
@@ -42,11 +45,7 @@ describe('Auth login-logout integration test', () => {
         password: userData.password
       });
 
-      const tokenFromDb = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
-
-      expect(tokenFromDb?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
     });
 
     it('❌ should not login; POST /auth/login', async () => {
@@ -69,13 +68,11 @@ describe('Auth login-logout integration test', () => {
 
       await userLogout(app, refreshToken);
 
-      const tokenFromDb = await db.refreshTokenCollection().findOne({userId: user.id});
-
-      expect(tokenFromDb?.token).toBeUndefined();
+      await checkDevice(refreshToken, false);
     });
 
-    it('❌ should not login, token is not deleted; POST /auth/logout', async () => {
-      await userLogin(app, {
+    it('❌ should not logout, unauthirized; POST /auth/logout', async () => {
+      const {refreshToken} = await userLogin(app, {
         loginOrEmail: userData.email,
         password: userData.password
       });
@@ -85,9 +82,7 @@ describe('Auth login-logout integration test', () => {
         .set('Cookie', ['refreshToken=randomToken'])
         .expect(HttpStatus.UNAUTHORIZED_401);
 
-      const tokenFromDb = await db.refreshTokenCollection().findOne({userId: user.id});
-
-      expect(tokenFromDb?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
     });
   });
 
@@ -98,19 +93,13 @@ describe('Auth login-logout integration test', () => {
         password: userData.password
       });
 
-      const tokenFromDb = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
+      await delay(1100);
 
-      expect(tokenFromDb?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
 
       await refreshTokenTest(app, refreshToken);
 
-      const tokenFromDb2 = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
-
-      expect(tokenFromDb2?.token).toBeUndefined();
+      await checkDevice(refreshToken, false);
     });
 
     it('❌ should not refresh token; POST /auth/refresh-token', async () => {
@@ -119,22 +108,16 @@ describe('Auth login-logout integration test', () => {
         password: userData.password
       });
 
-      const tokenFromDb = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
+      await delay(1100);
 
-      expect(tokenFromDb?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
 
       await request(app)
         .post(`${AUTH_PATH}/refresh-token`)
         .set('Cookie', ['refreshToken=rundomToken'])
         .expect(HttpStatus.UNAUTHORIZED_401);
 
-      const tokenFromDb2 = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
-
-      expect(tokenFromDb2?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
     });
 
     it('❌ should not refresh token (no cookies); POST /auth/refresh-token', async () => {
@@ -143,21 +126,15 @@ describe('Auth login-logout integration test', () => {
         password: userData.password
       });
 
-      const tokenFromDb = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
+      await delay(1100);
 
-      expect(tokenFromDb?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
 
       await request(app)
         .post(`${AUTH_PATH}/refresh-token`)
         .expect(HttpStatus.UNAUTHORIZED_401);
 
-      const tokenFromDb2 = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
-
-      expect(tokenFromDb2?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
     });
   });
 
@@ -173,23 +150,15 @@ describe('Auth login-logout integration test', () => {
         password: userData.password
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await delay(1100);
 
-      const tokenFromDb = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
-
-      expect(tokenFromDb?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
 
       await request(app)
         .post(`${AUTH_PATH}/refresh-token`)
         .expect(HttpStatus.UNAUTHORIZED_401);
 
-      const tokenFromDb2 = await db
-        .refreshTokenCollection()
-        .findOne({token: refreshToken});
-
-      expect(tokenFromDb2?.token).toBeDefined();
+      await checkDevice(refreshToken, true);
     });
   });
 });

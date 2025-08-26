@@ -9,6 +9,7 @@ import {db} from '../../../src/db/mongo.db';
 import {setupApp} from '../../../src/setupApp';
 import {createUser, getUserDto} from '../../utils/users';
 import {userLogin} from '../../utils/auth';
+import {config} from '../../../src/core/settings/config';
 
 describe('Auth API', () => {
   const app = express();
@@ -61,5 +62,21 @@ describe('Auth API', () => {
 
   it('❌ should not user login without authorization header; GET /auth/me', async () => {
     await request(app).get(`${AUTH_PATH}/me`).expect(HttpStatus.UNAUTHORIZED_401);
+  });
+
+  it('❌ should not user login (rate limit)', async () => {
+    let lastResponse;
+
+    for (let i = 0; i < config.RATE_LIMIT + 1; i++) {
+      lastResponse = await request(app)
+        .post(`${AUTH_PATH}/login`)
+        .send({loginOrEmail: 'someLogin', password: 'somePass'});
+    }
+
+    if (!lastResponse) {
+      throw new Error('lastResponse is undefined');
+    }
+
+    expect(lastResponse.status).toBe(HttpStatus.TOO_MANY_REQUESTS_429);
   });
 });

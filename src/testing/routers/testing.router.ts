@@ -10,7 +10,8 @@ testingRouter.delete('/all-data', async (_: Request, res: Response) => {
     db.blogCollection().deleteMany(),
     db.postCollection().deleteMany(),
     db.commentCollection().deleteMany(),
-    db.refreshTokenCollection().deleteMany()
+    db.deviceCollection().deleteMany(),
+    db.logCollection().deleteMany()
   ]);
 
   res.sendStatus(HttpStatus.NO_CONTENT_204);

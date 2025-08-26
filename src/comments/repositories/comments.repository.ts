@@ -43,22 +43,17 @@ export const commentsRepository = {
   },
 
   async update(id: string, body: CommentInputDto): Promise<void> {
-    const updateResult = await db
-      .commentCollection()
-      .updateOne({_id: new ObjectId(id)}, {$set: {...body}});
-
-    if (updateResult.matchedCount < 1) {
-      throw new Error('Comment not exist');
-    }
+    await db.commentCollection().updateOne(
+      {
+        _id: new ObjectId(id)
+      },
+      {$set: {...body}}
+    );
   },
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await db.commentCollection().deleteOne({
+    await db.commentCollection().deleteOne({
       _id: new ObjectId(id)
     });
-
-    if (deleteResult.deletedCount < 1) {
-      throw new Error('Comment not exist');
-    }
   }
 };

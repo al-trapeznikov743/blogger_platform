@@ -43,7 +43,10 @@ export const getQueryOptions = ({
 
 export const parseTimeToSeconds = (time: string): number => {
   const match = time.match(/^(\d+)([smhd])$/);
-  if (!match) throw new Error(`Invalid time format: ${time}`);
+
+  if (!match) {
+    throw new Error(`Invalid time format: ${time}`);
+  }
 
   const value = parseInt(match[1], 10);
   const unit = match[2];

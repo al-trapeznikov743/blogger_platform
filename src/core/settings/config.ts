@@ -10,6 +10,8 @@ export const config: {
   RT_TIME: string | number;
   EMAIL: string;
   EMAIL_PASS: string;
+  RATE_LIMIT: number;
+  RATE_LIMIT_SEC: number;
 } = {
   ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'ADMIN_USERNAME',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'ADMIN_PASSWORD',
@@ -25,5 +27,13 @@ export const config: {
   RT_TIME: process.env.RT_TIME || '20s',
 
   EMAIL: process.env.EMAIL || 'your-email@gmail.com',
-  EMAIL_PASS: process.env.EMAIL_PASS || 'your-app-password'
+  EMAIL_PASS: process.env.EMAIL_PASS || 'your-app-password',
+
+  get RATE_LIMIT(): number {
+    return Number(process.env.RATE_LIMIT || '5');
+  },
+
+  get RATE_LIMIT_SEC(): number {
+    return Number(process.env.RATE_LIMIT_SEC || '10');
+  }
 };

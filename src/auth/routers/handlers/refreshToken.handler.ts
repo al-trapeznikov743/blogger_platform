@@ -1,16 +1,23 @@
 import {NextFunction, Request, Response} from 'express';
 import {authService} from '../../domain/auth.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
+import {RequestDevice, RequestUserData} from '../../../devices/types/devices';
 
 export const refreshTokenHandler = async (
-  req: Request,
+  {device, headers, ip}: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const oldRefreshToken = req.cookies.refreshToken;
+    const requestData = {
+      ip,
+      device: headers?.['user-agent'] || 'Unknown device'
+    } as RequestUserData;
 
-    const {accessToken, refreshToken} = await authService.refreshToken(oldRefreshToken);
+    const {accessToken, refreshToken} = await authService.refreshToken(
+      device as RequestDevice,
+      requestData
+    );
 
     res
       .cookie('refreshToken', refreshToken, {

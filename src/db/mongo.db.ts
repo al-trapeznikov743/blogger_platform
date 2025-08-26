@@ -4,13 +4,15 @@ import {UserDbType} from '../users/types/user';
 import {BlogDbType} from '../blogs/types/blog';
 import {PostDbType} from '../posts/types/post';
 import {CommentDbType} from '../comments/types/comment';
-import {RefreshTokenDbType} from '../auth/types/auth';
+import {LogDbType} from '../logs/types/logs';
+import {DeviceSessionDbType} from '../devices/types/devices';
 
 const USER_COLLECTION_NAME = 'users';
 const BLOG_COLLECTION_NAME = 'blogs';
 const POST_COLLECTION_NAME = 'posts';
 const COMMENT_COLLECTION_NAME = 'comment';
-const REFRESH_TOKEN_COLLECTION_NAME = 'refresh_token_whitelist';
+const DEVICE_COLLECTION_NAME = 'devices';
+const LOG_COLLECTION_NAME = 'api_logs';
 
 export const db = {
   client: {} as MongoClient,
@@ -78,7 +80,11 @@ export const db = {
     return this.getDb().collection(COMMENT_COLLECTION_NAME);
   },
 
-  refreshTokenCollection(): Collection<RefreshTokenDbType> {
-    return this.getDb().collection(REFRESH_TOKEN_COLLECTION_NAME);
+  deviceCollection(): Collection<DeviceSessionDbType> {
+    return this.getDb().collection(DEVICE_COLLECTION_NAME);
+  },
+
+  logCollection(): Collection<LogDbType> {
+    return this.getDb().collection(LOG_COLLECTION_NAME);
   }
 };

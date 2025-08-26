@@ -61,22 +61,17 @@ export const postsRepository = {
   },
 
   async update(id: string, body: PostInputDto): Promise<void> {
-    const updateResult = await db
-      .postCollection()
-      .updateOne({_id: new ObjectId(id)}, {$set: {...body}});
-
-    if (updateResult.matchedCount < 1) {
-      throw new Error('Post not exist');
-    }
+    await db.postCollection().updateOne(
+      {
+        _id: new ObjectId(id)
+      },
+      {$set: {...body}}
+    );
   },
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await db.postCollection().deleteOne({
+    await db.postCollection().deleteOne({
       _id: new ObjectId(id)
     });
-
-    if (deleteResult.deletedCount < 1) {
-      throw new Error('Post not exist');
-    }
   }
 };

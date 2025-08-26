@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "yarn swagger:dev && nodemon --inspect dist/index.js",
-    "test": "jest -i",
+    "test": "jest -i --detectOpenHandles",
     "coverage": "jest -i --coverage",
     "swagger:build": "swagger-cli bundle ./src/core/swagger/swagger.yaml --outfile dist/core/swagger/swagger.yaml --type yaml",
     "swagger:validate": "swagger-cli validate ./src/core/swagger/swagger.yaml",

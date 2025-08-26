@@ -12,23 +12,15 @@ export const usersRepository = {
   },
 
   async updateUser(userId: string, updateFields: Record<string, any>): Promise<void> {
-    const updateResult = await db
+    await db
       .userCollection()
       .updateOne({_id: new ObjectId(userId)}, {$set: updateFields});
-
-    if (updateResult.matchedCount < 1) {
-      throw new Error('Update failed: user not found');
-    }
   },
 
   async delete(id: string): Promise<void> {
-    const result = await db.userCollection().deleteOne({
+    await db.userCollection().deleteOne({
       _id: new ObjectId(id)
     });
-
-    if (result.deletedCount < 1) {
-      throw new Error('User not found');
-    }
   },
 
   async findById(id: string): Promise<UserType | null> {

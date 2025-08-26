@@ -17,18 +17,3 @@ export type Tokens = {
   accessToken: string;
   refreshToken: string;
 };
-
-export type BaseRefreshToken = {
-  userId: string;
-  token: string;
-  createdAt: string;
-  expiresAt: string;
-};
-
-export type RefreshTokenDbType = BaseRefreshToken & {
-  _id?: ObjectId;
-};
-
-export type RefreshTokenViewType = BaseRefreshToken & {
-  id: string;
-};

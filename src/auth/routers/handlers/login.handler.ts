@@ -3,16 +3,23 @@ import {authService} from '../../domain/auth.service';
 import {HttpStatus} from '../../../core/types/httpStatuses';
 import {RequestWithBody} from '../../../core/types/requests';
 import {LoginDto} from '../../types/auth';
+import {RequestUserData} from '../../../devices/types/devices';
 
 export const loginHandler = async (
-  {body: {loginOrEmail, password}}: RequestWithBody<LoginDto>,
+  {body: {loginOrEmail, password}, headers, ip}: RequestWithBody<LoginDto>,
   res: Response,
   next: NextFunction
 ) => {
+  const requestData = {
+    ip,
+    device: headers?.['user-agent'] || 'Unknown device'
+  } as RequestUserData;
+
   try {
     const {accessToken, refreshToken} = await authService.loginUser(
       loginOrEmail,
-      password
+      password,
+      requestData
     );
 
     res

@@ -8,8 +8,11 @@ import {usersRepository} from '../../src/users/repositories/users.repository';
 import {BaseUserData} from '../../src/users/types/user';
 import {usersService} from '../../src/users/domain/users.service';
 import {Tokens} from './../../src/auth/types/auth';
+import {jwtService} from '../../src/auth/adapters/jwt.adapter';
+import {config} from '../../src/core/settings/config';
+import {devicesService} from '../../src/devices/domain/devices.service';
 
-const getRefreshTokenFromResponse = (res: Response): string => {
+export const getRefreshTokenFromResponse = (res: Response): string => {
   expect(res.body).toHaveProperty('accessToken');
   expect(typeof res.body.accessToken).toBe('string');
 
@@ -24,13 +27,22 @@ const getRefreshTokenFromResponse = (res: Response): string => {
   return refreshCookie.split(';')[0].split('=')[1];
 };
 
-export const userLogin = async (app: Express, loginDto: LoginDto): Promise<Tokens> => {
+type LoginOptions = {userAgent?: string};
+
+export const userLogin = async (
+  app: Express,
+  loginDto: LoginDto,
+  options?: LoginOptions
+): Promise<Tokens> => {
   const {loginOrEmail, password} = loginDto;
 
-  const res = await request(app)
-    .post(`${AUTH_PATH}/login`)
-    .send({loginOrEmail, password})
-    .expect(HttpStatus.OK_200);
+  const req = request(app).post(`${AUTH_PATH}/login`).send({loginOrEmail, password});
+
+  if (options?.userAgent) {
+    req.set('User-Agent', options.userAgent);
+  }
+
+  const res = await req.expect(HttpStatus.OK_200);
 
   const refreshToken = getRefreshTokenFromResponse(res);
 
@@ -68,3 +80,23 @@ export const checkConfirm = async (email: string) => {
 
   expect(user.emailConfirmation.isConfirmed).toBe(true);
 };
+
+export const checkDevice = async (
+  refreshToken: string,
+  isDefined: boolean
+): Promise<void> => {
+  const {deviceId, iat} = await jwtService.verifyToken(refreshToken, config.RT_SECRET);
+
+  const [device] = await devicesService.searchDeviceSessions({
+    deviceId,
+    iat
+  });
+
+  if (isDefined) {
+    expect(device?.id).toBeDefined();
+  } else {
+    expect(device?.id).toBeUndefined();
+  }
+};
+
+export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

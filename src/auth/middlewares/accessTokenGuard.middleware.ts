@@ -23,17 +23,9 @@ export const accessTokenGuard = async (
     return;
   }
 
-  const payload = await jwtService.verifyToken(token, config.AC_SECRET);
+  const {userId} = await jwtService.verifyToken(token, config.AC_SECRET);
 
-  if (payload) {
-    const {userId} = payload;
+  req.user = {id: userId};
 
-    req.user = {id: userId} as IdType;
-
-    next();
-
-    return;
-  }
-
-  res.sendStatus(HttpStatus.UNAUTHORIZED_401);
+  next();
 };

@@ -8,6 +8,7 @@ import {
   PaginatedBlogs
 } from '../types/blog';
 import {mapMongoId} from '../../db/utils';
+import {NotFoundError} from '../../core/errors';
 
 export const blogsRepository = {
   async findMany({
@@ -55,22 +56,17 @@ export const blogsRepository = {
   },
 
   async update(id: string, body: BlogInputDto): Promise<void> {
-    const updateResult = await db
-      .blogCollection()
-      .updateOne({_id: new ObjectId(id)}, {$set: {...body}});
-
-    if (updateResult.matchedCount < 1) {
-      throw new Error('Blog not exist');
-    }
+    await db.blogCollection().updateOne(
+      {
+        _id: new ObjectId(id)
+      },
+      {$set: {...body}}
+    );
   },
 
   async delete(id: string): Promise<void> {
-    const deleteResult = await db.blogCollection().deleteOne({
+    await db.blogCollection().deleteOne({
       _id: new ObjectId(id)
     });
-
-    if (deleteResult.deletedCount < 1) {
-      throw new Error('Blog not exist');
-    }
   }
 };

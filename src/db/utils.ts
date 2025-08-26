@@ -16,3 +16,15 @@ export const mapMongoId = ({_id, ...rest}: MongoObj): ViewObj => {
     ...rest
   };
 };
+
+// type WithMongoId<T> = T & {_id: ObjectId};
+
+/* export const mapMongoId = <T extends {_id: ObjectId}>({
+  _id,
+  ...rest
+}: WithMongoId<T>): Omit<T, '_id'> & {id: string} => {
+  return {
+    id: _id.toString(),
+    ...rest
+  };
+}; */

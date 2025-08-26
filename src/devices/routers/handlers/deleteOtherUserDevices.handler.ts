@@ -1,18 +1,18 @@
 import {NextFunction, Request, Response} from 'express';
+import {devicesService} from '../../domain/devices.service';
+import {RequestDevice} from '../../types/devices';
 import {HttpStatus} from '../../../core/types/httpStatuses';
-import {authService} from '../../domain/auth.service';
-import {RequestDevice} from '../../../devices/types/devices';
 
-export const logoutHandler = async (
+export const deleteOtherUserDevices = async (
   {device}: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    await authService.logoutUser(device as RequestDevice);
+    await devicesService.deleteOtherUserDevices(device as RequestDevice);
 
     res.sendStatus(HttpStatus.NO_CONTENT_204);
-  } catch (err) {
+  } catch (err: unknown) {
     next(err);
   }
 };
