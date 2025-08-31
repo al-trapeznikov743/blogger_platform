@@ -1,6 +1,13 @@
 import {ObjectId} from 'mongodb';
 import {FullPaginationSorting} from '../../core/types/paginationAndSorting';
 
+export const USERS_DI_TYPES = {
+  UsersQueryRepository: Symbol.for('UsersQueryRepository'),
+  UsersRepository: Symbol.for('UsersRepository'),
+  UsersService: Symbol.for('UsersService'),
+  UsersController: Symbol.for('UsersController')
+};
+
 export type UserType = {
   id: string;
   login: string;
@@ -15,12 +22,18 @@ export type BaseUserData = {
   expirationDate?: string;
   confirmationCode?: string;
   isConfirmed?: boolean;
+  recoveryCode?: string;
 };
 
-export type emailConfirmation = {
+export type EmailConfirmation = {
   confirmationCode: string;
   expirationDate: string;
   isConfirmed: boolean;
+};
+
+export type RecoveryPassword = {
+  recoveryCode: string;
+  expirationDate: string;
 };
 
 export type BaseUser = {
@@ -28,7 +41,8 @@ export type BaseUser = {
   email: string;
   passwordHash: string;
   createdAt: string;
-  emailConfirmation: emailConfirmation;
+  emailConfirmation: EmailConfirmation;
+  recoveryPassword?: RecoveryPassword;
 };
 
 export type UserDbType = BaseUser & {

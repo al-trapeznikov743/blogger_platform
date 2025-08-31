@@ -1,6 +1,12 @@
 import {ObjectId} from 'mongodb';
 import {FullPaginationSorting} from '../../core/types/paginationAndSorting';
 
+export const BLOG_DI_TYPES = {
+  BlogsRepository: Symbol.for('BlogsRepository'),
+  BlogsService: Symbol.for('BlogsService'),
+  BlogsController: Symbol.for('BlogsController')
+};
+
 export type BaseBlog = {
   name: string;
   description: string;

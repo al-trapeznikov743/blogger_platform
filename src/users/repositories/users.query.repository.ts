@@ -1,10 +1,12 @@
+import {injectable} from 'inversify';
 import {ObjectId} from 'mongodb';
 import {db} from '../../db/mongo.db';
 import {FindUsersQueryOptions, PaginatedUsers, UserType} from '../types/user';
 import {getUserInView} from './utils';
 import {mapMongoId} from '../../db/utils';
 
-export const usersQueryRepository = {
+@injectable()
+export class UsersQueryRepository {
   async findUsers({
     sortBy,
     sortDirection,
@@ -42,11 +44,11 @@ export const usersQueryRepository = {
       totalCount,
       items: users.map((user) => getUserInView(user) as UserType)
     };
-  },
+  }
 
   async findById(id: string): Promise<UserType | null> {
     const user = await db.userCollection().findOne({_id: new ObjectId(id)});
 
     return user ? (mapMongoId(user) as UserType) : user;
   }
-};
+}

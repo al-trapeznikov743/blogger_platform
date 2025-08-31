@@ -2,20 +2,36 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import {MongoMemoryServer} from 'mongodb-memory-server';
+import {container} from '../../src/compositionRoot';
 import {db} from '../../src/db/mongo.db';
-import {nodemailerService} from '../../src/auth/adapters/nodemailer.adapter';
-import {authService} from '../../src/auth/domain/auth.service';
+import {NodemailerService} from '../../src/auth/adapters/nodemailer.adapter';
+import {AuthService} from '../../src/auth/domain/auth.service';
 import {getUserDto} from '../utils/users';
-import {usersService} from '../../src/users/domain/users.service';
+import {UsersService} from '../../src/users/domain/users.service';
 import {BadRequestError} from '../../src/core/errors';
 import {checkConfirm, insertUserInDb} from '../utils/auth';
-import {bcryptService} from '../../src/auth/adapters/bcrypt.adapter';
+import {BcryptService} from '../../src/auth/adapters/bcrypt.adapter';
+import {AUTH_DI_TYPES} from '../../src/auth/types/auth';
+import {USERS_DI_TYPES} from '../../src/users/types/user';
+import {ADAPTERS_DI_TYPES} from '../../src/auth/types/adapters';
 
 describe('Auth registration integration test', () => {
   let mongoServer: MongoMemoryServer;
+  let authService: AuthService;
+  let usersService: UsersService;
+  let bcryptService: BcryptService;
+  let nodemailerService: NodemailerService;
 
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
+    authService = container.get<AuthService>(AUTH_DI_TYPES.AuthService);
+    usersService = container.get<UsersService>(USERS_DI_TYPES.UsersService);
+    bcryptService = container.get<BcryptService>(ADAPTERS_DI_TYPES.BcryptService);
+    nodemailerService = container.get<NodemailerService>(
+      ADAPTERS_DI_TYPES.NodemailerService
+    );
+
+    jest.spyOn(nodemailerService, 'sendEmail').mockResolvedValue(undefined);
 
     await db.run(mongoServer.getUri());
   });
@@ -27,19 +43,10 @@ describe('Auth registration integration test', () => {
   });
 
   describe('User registration', () => {
-    nodemailerService.sendEmail = jest
-      .fn()
-      .mockImplementation(
-        (email: string, code: string, template: (code: string) => string) =>
-          Promise.resolve(true)
-      );
-
-    const {registerUser} = authService;
-
     const {login, email, password} = getUserDto();
 
     it('should register user with correct data', async () => {
-      await registerUser(login, password, email);
+      await authService.registerUser(login, password, email);
 
       const user = await usersService.findUserByEmail(email);
 
@@ -49,9 +56,9 @@ describe('Auth registration integration test', () => {
     });
 
     it('should not register user twice', async () => {
-      await expect(registerUser(login, password, email)).rejects.toBeInstanceOf(
-        BadRequestError
-      );
+      await expect(
+        authService.registerUser(login, password, email)
+      ).rejects.toBeInstanceOf(BadRequestError);
     });
   });
 

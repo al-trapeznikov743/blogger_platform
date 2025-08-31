@@ -1,10 +1,12 @@
+import {injectable} from 'inversify';
 import {ObjectId} from 'mongodb';
 import {db} from '../../db/mongo.db';
 import {BaseComment, Comment, CommentInputDto, PaginatedComments} from '../types/comment';
 import {getCommentInView} from './utils';
 import {FullPaginationSorting} from '../../core/types/paginationAndSorting';
 
-export const commentsRepository = {
+@injectable()
+export class CommentsRepository {
   async findManyByPostId(
     postId: string,
     {sortBy, sortDirection, pageNumber, pageSize}: FullPaginationSorting
@@ -28,19 +30,19 @@ export const commentsRepository = {
       totalCount,
       items: comments.map(getCommentInView) as Comment[]
     };
-  },
+  }
 
   async findCommentById(id: string): Promise<Comment | null> {
     const comment = await db.commentCollection().findOne({_id: new ObjectId(id)});
 
     return comment ? (getCommentInView(comment) as Comment) : comment;
-  },
+  }
 
   async create(comment: BaseComment): Promise<Comment> {
     const insertResult = await db.commentCollection().insertOne(comment);
 
     return getCommentInView({...comment, _id: insertResult.insertedId}) as Comment;
-  },
+  }
 
   async update(id: string, body: CommentInputDto): Promise<void> {
     await db.commentCollection().updateOne(
@@ -49,11 +51,11 @@ export const commentsRepository = {
       },
       {$set: {...body}}
     );
-  },
+  }
 
   async delete(id: string): Promise<void> {
     await db.commentCollection().deleteOne({
       _id: new ObjectId(id)
     });
   }
-};
+}

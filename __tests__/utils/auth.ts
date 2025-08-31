@@ -1,16 +1,24 @@
 import request, {Response} from 'supertest';
 import {Express} from 'express';
+import {container} from '../../src/compositionRoot';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
 import {AUTH_PATH} from '../../src/core/paths/paths';
 import {LoginDto} from '../../src/auth/types/auth';
 import {User} from '../../src/users/domain/user.entity';
-import {usersRepository} from '../../src/users/repositories/users.repository';
-import {BaseUserData} from '../../src/users/types/user';
-import {usersService} from '../../src/users/domain/users.service';
+import {UsersRepository} from '../../src/users/repositories/users.repository';
+import {BaseUserData, USERS_DI_TYPES} from '../../src/users/types/user';
+import {UsersService} from '../../src/users/domain/users.service';
 import {Tokens} from './../../src/auth/types/auth';
-import {jwtService} from '../../src/auth/adapters/jwt.adapter';
+import {JwtService} from '../../src/auth/adapters/jwt.adapter';
 import {config} from '../../src/core/settings/config';
-import {devicesService} from '../../src/devices/domain/devices.service';
+import {DevicesService} from '../../src/devices/domain/devices.service';
+import {DEVICES_DI_TYPES} from '../../src/devices/types/devices';
+import {ADAPTERS_DI_TYPES} from '../../src/auth/types/adapters';
+
+const usersRepository = container.get<UsersRepository>(USERS_DI_TYPES.UsersRepository);
+const usersService = container.get<UsersService>(USERS_DI_TYPES.UsersService);
+const devicesService = container.get<DevicesService>(DEVICES_DI_TYPES.DevicesService);
+const jwtService = container.get<JwtService>(ADAPTERS_DI_TYPES.JwtService);
 
 export const getRefreshTokenFromResponse = (res: Response): string => {
   expect(res.body).toHaveProperty('accessToken');
@@ -98,5 +106,12 @@ export const checkDevice = async (
     expect(device?.id).toBeUndefined();
   }
 };
+
+/* export const passwordRecovery = async (app: Express, email: string) => {
+  const res = await request(app)
+    .post(`${AUTH_PATH}/password-recovery`)
+    .send({email})
+    .expect(HttpStatus.OK_200);
+}; */
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

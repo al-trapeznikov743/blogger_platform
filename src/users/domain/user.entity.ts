@@ -11,6 +11,10 @@ export class User {
     expirationDate: string;
     isConfirmed: boolean;
   };
+  recoveryPassword?: {
+    recoveryCode: string;
+    expirationDate: string;
+  };
 
   constructor({
     login,
@@ -18,7 +22,8 @@ export class User {
     passwordHash,
     expirationDate,
     confirmationCode,
-    isConfirmed
+    isConfirmed,
+    recoveryCode
   }: BaseUserData) {
     this.login = login;
     this.email = email;
@@ -26,10 +31,17 @@ export class User {
     this.createdAt = new Date().toISOString();
 
     this.emailConfirmation = {
-      expirationDate: expirationDate || User.getExpDate(),
       confirmationCode: confirmationCode || randomUUID(),
+      expirationDate: expirationDate || User.getExpDate(),
       isConfirmed: !!isConfirmed
     };
+
+    if (recoveryCode) {
+      this.recoveryPassword = {
+        recoveryCode: recoveryCode,
+        expirationDate: User.getExpDate()
+      };
+    }
   }
 
   static getExpDate(): string {

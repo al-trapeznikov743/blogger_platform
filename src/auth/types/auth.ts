@@ -1,4 +1,7 @@
-import {ObjectId} from 'mongodb';
+export const AUTH_DI_TYPES = {
+  AuthService: Symbol.for('AuthService'),
+  AuthController: Symbol.for('AuthController')
+};
 
 export type LoginDto = {
   loginOrEmail: string;

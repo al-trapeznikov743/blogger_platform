@@ -4,18 +4,20 @@ dotenv.config();
 import express from 'express';
 import request from 'supertest';
 import {MongoMemoryServer} from 'mongodb-memory-server';
+import {container} from '../../src/compositionRoot';
 import {db} from '../../src/db/mongo.db';
 import {setupApp} from '../../src/setupApp';
 import {createUser, getUserDto} from '../utils/users';
 import {userLogin, refreshTokenTest, delay} from '../utils/auth';
 import {AUTH_PATH, SECURITY_DEVICES_PATH} from '../../src/core/paths/paths';
 import {HttpStatus} from '../../src/core/types/httpStatuses';
-import {UserInputDto, UserViewType} from '../../src/users/types/user';
+import {UserInputDto} from '../../src/users/types/user';
 import {config} from '../../src/core/settings/config';
-import {jwtService} from '../../src/auth/adapters/jwt.adapter';
+import {JwtService} from '../../src/auth/adapters/jwt.adapter';
 import {JwtPayload} from 'jsonwebtoken';
-import {devicesService} from '../../src/devices/domain/devices.service';
-import {RequestDevice} from '../../src/devices/types/devices';
+import {DevicesService} from '../../src/devices/domain/devices.service';
+import {DEVICES_DI_TYPES, RequestDevice} from '../../src/devices/types/devices';
+import {ADAPTERS_DI_TYPES} from '../../src/auth/types/adapters';
 
 const agents = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
@@ -34,18 +36,22 @@ describe('Devices integration test', () => {
   setupApp(app);
 
   let mongoServer: MongoMemoryServer;
+  let devicesService: DevicesService;
+  let jwtService: JwtService;
+
   let userData: UserInputDto;
-  let user: UserViewType;
 
   const devices: DeviceData[] = [];
 
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
+    devicesService = container.get<DevicesService>(DEVICES_DI_TYPES.DevicesService);
+    jwtService = container.get<JwtService>(ADAPTERS_DI_TYPES.JwtService);
 
     await db.run(mongoServer.getUri());
 
     userData = getUserDto();
-    user = await createUser(app, userData);
+    await createUser(app, userData);
 
     process.env.RATE_LIMIT = '50';
     process.env.RATE_LIMIT_SEC = '100';

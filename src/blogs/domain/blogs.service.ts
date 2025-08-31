@@ -1,47 +1,59 @@
-import {blogsRepository} from './../repositories/blogs.repository';
+import {inject, injectable} from 'inversify';
+import {BlogsRepository} from './../repositories/blogs.repository';
 import {NotFoundError} from '../../core/errors';
-import {Blog, BlogInputDto, FindBlogsQueryOptions, PaginatedBlogs} from '../types/blog';
+import {
+  Blog,
+  BlogInputDto,
+  FindBlogsQueryOptions,
+  PaginatedBlogs,
+  BLOG_DI_TYPES
+} from '../types/blog';
 
-export const blogsService = {
+@injectable()
+export class BlogsService {
+  constructor(
+    @inject(BLOG_DI_TYPES.BlogsRepository) private blogsRepository: BlogsRepository
+  ) {}
+
   async findMany(options: FindBlogsQueryOptions): Promise<PaginatedBlogs> {
-    return blogsRepository.findMany(options);
-  },
+    return this.blogsRepository.findMany(options);
+  }
 
   async findById(id: string): Promise<Blog> {
-    const blog = await blogsRepository.findById(id);
+    const blog = await this.blogsRepository.findById(id);
 
     if (!blog) {
       throw new NotFoundError('id', `Blog with ID=${id} not found`);
     }
 
     return blog;
-  },
+  }
 
   async create(blog: BlogInputDto): Promise<Blog> {
-    return blogsRepository.create({
+    return this.blogsRepository.create({
       ...blog,
       createdAt: new Date().toISOString(),
       isMembership: false
     });
-  },
+  }
 
   async update(id: string, body: BlogInputDto): Promise<void> {
-    const blog = await blogsRepository.findById(id);
+    const blog = await this.blogsRepository.findById(id);
 
     if (!blog) {
       throw new NotFoundError('id', `Blog with ID=${id} not found`);
     }
 
-    return blogsRepository.update(id, body);
-  },
+    return this.blogsRepository.update(id, body);
+  }
 
   async delete(id: string): Promise<void> {
-    const blog = await blogsRepository.findById(id);
+    const blog = await this.blogsRepository.findById(id);
 
     if (!blog) {
       throw new NotFoundError('id', `Blog with ID=${id} not found`);
     }
 
-    return blogsRepository.delete(id);
+    return this.blogsRepository.delete(id);
   }
-};
+}

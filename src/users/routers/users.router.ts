@@ -1,15 +1,16 @@
-import {validationResultMiddleware} from './../../core/middlewares/validation/validationResult.middleware';
 import {Router} from 'express';
-import {getUsersHandler} from './handlers/getUsers.handler';
-import {createUserHandler} from './handlers/createUser.handler';
-import {deleteUserHandler} from './handlers/deleteUser.handler';
+import {container} from '../../compositionRoot';
+import {USERS_DI_TYPES} from '../types/user';
+import {validationResultMiddleware} from './../../core/middlewares/validation/validationResult.middleware';
 import {queryValidation} from '../../core/middlewares/validation/queryValidation.middleware';
 import {UserSortFields} from '../enums';
 import {idValidation} from '../../core/middlewares/validation/paramsValidation.middleware';
 import {baseAuthGuard} from '../../auth/middlewares/baseAuthGuard.middleware';
 import {userInputDtoValitation} from '../validation/userInputDto.validation';
+import {UsersController} from './users.controller';
 
 export const usersRouter = Router();
+const usersController = container.get<UsersController>(USERS_DI_TYPES.UsersController);
 
 usersRouter
   .get(
@@ -17,19 +18,19 @@ usersRouter
     baseAuthGuard,
     queryValidation(UserSortFields),
     validationResultMiddleware,
-    getUsersHandler
+    usersController.getUsers.bind(usersController)
   )
   .post(
     '',
     baseAuthGuard,
     userInputDtoValitation,
     validationResultMiddleware,
-    createUserHandler
+    usersController.createUser.bind(usersController)
   )
   .delete(
     '/:id',
     baseAuthGuard,
     idValidation(),
     validationResultMiddleware,
-    deleteUserHandler
+    usersController.deleteUser.bind(usersController)
   );

@@ -1,8 +1,11 @@
 import {NextFunction, Request, Response} from 'express';
+import {container} from '../../compositionRoot';
 import {config} from '../../core/settings/config';
-import {IdType} from './../../core/types/shared';
 import {HttpStatus} from '../../core/types/httpStatuses';
-import {jwtService} from '../adapters/jwt.adapter';
+import {JwtService} from '../adapters/jwt.adapter';
+import {ADAPTERS_DI_TYPES} from '../types/adapters';
+
+const jwtService = container.get<JwtService>(ADAPTERS_DI_TYPES.JwtService);
 
 export const accessTokenGuard = async (
   req: Request,

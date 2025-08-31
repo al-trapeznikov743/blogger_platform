@@ -7,13 +7,15 @@ import {
   SearchDeviceBody,
   UpdateDeviceBody
 } from '../types/devices';
+import {injectable} from 'inversify';
 
-export const devicesRepository = {
+@injectable()
+export class DevicesRepository {
   async createDeviceSession(device: BaseDeviceSession): Promise<string> {
     const {insertedId} = await db.deviceCollection().insertOne(device);
 
     return insertedId.toString();
-  },
+  }
 
   async searchDeviceSessions({
     userId,
@@ -31,7 +33,7 @@ export const devicesRepository = {
     const deviceSessions = await db.deviceCollection().find(filter).toArray();
 
     return deviceSessions.map((ds) => mapMongoId(ds) as DeviceSession);
-  },
+  }
 
   async updateDeviceSession(id: string, body: UpdateDeviceBody): Promise<void> {
     const updateResult = await db
@@ -41,20 +43,20 @@ export const devicesRepository = {
     if (updateResult.matchedCount < 1) {
       throw new Error('Device not exist');
     }
-  },
+  }
 
   async getUserDevices(userId: string): Promise<DeviceSession[]> {
     const devices = await db.deviceCollection().find({userId}).toArray();
 
     return devices.length ? (devices.map(mapMongoId) as DeviceSession[]) : [];
-  },
+  }
 
   async deleteOtherUserDevices(userId: string, deviceId: string): Promise<void> {
     await db.deviceCollection().deleteMany({
       userId,
       _id: {$ne: new ObjectId(deviceId)}
     });
-  },
+  }
 
   async deleteUserDeviceById(deviceId: string): Promise<void> {
     const deleteResult = await db.deviceCollection().deleteOne({
@@ -65,4 +67,4 @@ export const devicesRepository = {
       throw new Error('Device not exist');
     }
   }
-};
+}

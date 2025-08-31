@@ -1,3 +1,4 @@
+import {injectable} from 'inversify';
 import {ObjectId} from 'mongodb';
 import {db} from '../../db/mongo.db';
 import {
@@ -8,9 +9,9 @@ import {
   PaginatedBlogs
 } from '../types/blog';
 import {mapMongoId} from '../../db/utils';
-import {NotFoundError} from '../../core/errors';
 
-export const blogsRepository = {
+@injectable()
+export class BlogsRepository {
   async findMany({
     sortBy,
     sortDirection,
@@ -41,19 +42,19 @@ export const blogsRepository = {
       totalCount,
       items: blogs.map(mapMongoId) as Blog[]
     };
-  },
+  }
 
   async findById(id: string): Promise<Blog | null> {
     const blog = await db.blogCollection().findOne({_id: new ObjectId(id)});
 
     return blog ? (mapMongoId(blog) as Blog) : blog;
-  },
+  }
 
   async create(blog: BaseBlog): Promise<Blog> {
     const insertResult = await db.blogCollection().insertOne(blog);
 
     return mapMongoId({...blog, _id: insertResult.insertedId}) as Blog;
-  },
+  }
 
   async update(id: string, body: BlogInputDto): Promise<void> {
     await db.blogCollection().updateOne(
@@ -62,11 +63,11 @@ export const blogsRepository = {
       },
       {$set: {...body}}
     );
-  },
+  }
 
   async delete(id: string): Promise<void> {
     await db.blogCollection().deleteOne({
       _id: new ObjectId(id)
     });
   }
-};
+}

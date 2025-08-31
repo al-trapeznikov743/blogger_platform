@@ -1,5 +1,11 @@
 import {ObjectId} from 'mongodb';
 
+export const POST_DI_TYPES = {
+  PostsRepository: Symbol.for('PostsRepository'),
+  PostsService: Symbol.for('PostsService'),
+  PostsController: Symbol.for('PostsController')
+};
+
 export type BasePost = {
   title: string;
   shortDescription: string;

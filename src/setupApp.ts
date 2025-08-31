@@ -19,11 +19,9 @@ import {usersRouter} from './users/routers/users.router';
 import {authRouter} from './auth/routers/auth.router';
 import {commentsRouter} from './comments/routers/comments.router';
 import {devicesRouter} from './devices/routers/devices.router';
-// import {apiRequestLogger} from './logs/middlewares/apiRequestLogger.middleware';
 
 export const setupApp = (app: Express) => {
   app.set('trust proxy', true);
-  // app.use(apiRequestLogger);
 
   app.use(express.json());
   app.use(cookieParser());

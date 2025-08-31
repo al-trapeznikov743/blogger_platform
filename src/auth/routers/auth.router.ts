@@ -1,43 +1,50 @@
 import {Router} from 'express';
-import {loginHandler} from './handlers/login.handler';
-import {refreshTokenHandler} from './handlers/refreshToken.handler';
+import {container} from '../../compositionRoot';
+import {AUTH_DI_TYPES} from '../types/auth';
 import {loginInputDtoValitation} from '../validation/authInputDto.validation';
+import {newPasswordRecoveryDtoValidation} from '../validation/newPasswordRecoveryDto.validation';
 import {rateLimitValidation} from '../../core/middlewares/validation/rateLimitValidation.middleware';
 import {validationResultMiddleware} from '../../core/middlewares/validation/validationResult.middleware';
-import {authMeHandler} from './handlers/authMe.handler';
 import {accessTokenGuard} from '../middlewares/accessTokenGuard.middleware';
-import {registrationHandler} from './handlers/registration.handler';
-import {registrationConfirmHandler} from './handlers/registrationConfirm.handler';
-import {registrationEmailResendHandler} from './handlers/registrationEmailResend.handler';
 import {userInputDtoValitation} from '../../users/validation/userInputDto.validation';
 import {confirmCodeDtoValitation} from '../validation/confirmCode.validation';
-import {emailResendDtoValitation} from '../validation/emailInputDto.validation';
-import {logoutHandler} from './handlers/logout.handler';
+import {emailDtoValitation} from '../validation/emailInputDto.validation';
 import {refreshTokenGuard} from '../middlewares/refreshTokenGuard.middleware';
+import {AuthController} from './auth.controller';
 
 export const authRouter = Router();
+const authController = container.get<AuthController>(AUTH_DI_TYPES.AuthController);
 
 authRouter
-  .get('/me', accessTokenGuard, validationResultMiddleware, authMeHandler)
+  .get(
+    '/me',
+    accessTokenGuard,
+    validationResultMiddleware,
+    authController.authMe.bind(authController)
+  )
 
   .post(
     '/login',
     rateLimitValidation,
     loginInputDtoValitation,
     validationResultMiddleware,
-    loginHandler
+    authController.login.bind(authController)
   )
 
-  .post('/logout', refreshTokenGuard, logoutHandler)
+  .post('/logout', refreshTokenGuard, authController.logout.bind(authController))
 
-  .post('/refresh-token', refreshTokenGuard, refreshTokenHandler)
+  .post(
+    '/refresh-token',
+    refreshTokenGuard,
+    authController.refreshToken.bind(authController)
+  )
 
   .post(
     '/registration',
     rateLimitValidation,
     userInputDtoValitation,
     validationResultMiddleware,
-    registrationHandler
+    authController.registration.bind(authController)
   )
 
   .post(
@@ -45,13 +52,29 @@ authRouter
     rateLimitValidation,
     confirmCodeDtoValitation,
     validationResultMiddleware,
-    registrationConfirmHandler
+    authController.registrationConfirm.bind(authController)
   )
 
   .post(
     '/registration-email-resending',
     rateLimitValidation,
-    emailResendDtoValitation,
+    emailDtoValitation,
     validationResultMiddleware,
-    registrationEmailResendHandler
+    authController.registrationEmailResending.bind(authController)
+  )
+
+  .post(
+    '/password-recovery',
+    rateLimitValidation,
+    emailDtoValitation,
+    validationResultMiddleware,
+    authController.passwordRecovery.bind(authController)
+  )
+
+  .post(
+    '/new-password',
+    rateLimitValidation,
+    newPasswordRecoveryDtoValidation,
+    validationResultMiddleware,
+    authController.newPassword.bind(authController)
   );

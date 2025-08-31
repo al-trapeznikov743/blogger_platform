@@ -1,14 +1,25 @@
 import {Router} from 'express';
-import {getUserDevices} from './handlers/getUserDevices.handler';
-import {deleteOtherUserDevices} from './handlers/deleteOtherUserDevices.handler';
-import {deleteUserDeviceById} from './handlers/deleteUserDeviceById.handler';
+import {container} from '../../compositionRoot';
+import {DEVICES_DI_TYPES} from '../types/devices';
 import {refreshTokenGuard} from '../../auth/middlewares/refreshTokenGuard.middleware';
+import {DevicesController} from './devices.controller';
 
 export const devicesRouter = Router();
+const devicesController = container.get<DevicesController>(
+  DEVICES_DI_TYPES.DevicesController
+);
 
 devicesRouter
-  .get('', refreshTokenGuard, getUserDevices)
+  .get('', refreshTokenGuard, devicesController.getUserDevices.bind(devicesController))
 
-  .delete('', refreshTokenGuard, deleteOtherUserDevices)
+  .delete(
+    '',
+    refreshTokenGuard,
+    devicesController.deleteOtherUserDevices.bind(devicesController)
+  )
 
-  .delete('/:id', refreshTokenGuard, deleteUserDeviceById);
+  .delete(
+    '/:id',
+    refreshTokenGuard,
+    devicesController.deleteUserDeviceById.bind(devicesController)
+  );

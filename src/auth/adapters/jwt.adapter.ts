@@ -1,15 +1,11 @@
 import jwt, {JwtPayload, SignOptions} from 'jsonwebtoken';
+import {injectable} from 'inversify';
 import {v4 as uuidv4} from 'uuid';
 import {UnauthorizedError} from '../../core/errors';
+import {Payload} from '../types/adapters';
 
-type Payload = {
-  userId: string;
-  deviceId?: string;
-  iat?: number;
-  exp?: number;
-};
-
-export const jwtService = {
+@injectable()
+export class JwtService {
   async createToken(
     {userId, deviceId, iat, exp}: Payload,
     secret: string,
@@ -35,7 +31,7 @@ export const jwtService = {
     }
 
     return jwt.sign(payload, secret, options);
-  },
+  }
 
   async verifyToken(token: string, secret: string): Promise<JwtPayload> {
     try {
@@ -45,4 +41,4 @@ export const jwtService = {
       throw new UnauthorizedError('Incorrect login or password');
     }
   }
-};
+}

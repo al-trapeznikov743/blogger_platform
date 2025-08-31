@@ -1,5 +1,11 @@
 import {ObjectId} from 'mongodb';
 
+export const DEVICES_DI_TYPES = {
+  DevicesRepository: Symbol.for('DevicesRepository'),
+  DevicesService: Symbol.for('DevicesService'),
+  DevicesController: Symbol.for('DevicesController')
+};
+
 export type BaseDeviceSession = {
   userId: string;
   device: string;

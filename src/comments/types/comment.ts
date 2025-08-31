@@ -1,5 +1,11 @@
 import {ObjectId} from 'mongodb';
 
+export const COMMENTS_DI_TYPES = {
+  CommentsRepository: Symbol.for('CommentsRepository'),
+  CommentsService: Symbol.for('CommentsService'),
+  CommentsController: Symbol.for('CommentsController')
+};
+
 export type BaseComment = {
   content: string;
   postId: string;
